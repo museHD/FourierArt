@@ -72,13 +72,35 @@ function createSVG(path) {
 }
 
 
-/////////////
-// Fourier //
-/////////////
 
-function FourierTransform(vectorPath) {
+/////////////////////////////////
+// Discrete Fourier Transform  //
+/////////////////////////////////
+
+
+function dft(vals) {
 	// Generate data for epicycles using path
 	// Return complex values?
+	
+	const N = vals.length;
+	var output = [];
+
+	// Iterate through each val
+	for (var k = 0; k < N; k++) {
+
+		var re = 0;
+		var im = 0;
+
+		for (n=0; n < N; n++) {
+			
+			let angle = 2*pi*k*n/N
+			re += vals[n] * cos(angle);
+			im -= vals[n] * sin(angle);
+		}
+
+		output[k] = {re, im};
+	}
+	return output;
 }
 
 
