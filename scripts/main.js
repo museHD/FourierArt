@@ -1,5 +1,15 @@
 function setup(){
+
 	// Create Canvas
+	const canvasplaceholder = document.getElementById("canvas-placeholder");
+	const canvas = document.createElement("canvas");
+	canvasplaceholder.replaceWith(canvas);
+	const ctx = canvas.getContext("2d");
+	const cw = 800;
+	const ch = 800;
+	canvas.width = cw;
+	canvas.height = ch;
+	
 	// Initialise API
 }
 
@@ -72,7 +82,9 @@ function FourierTransform(vectorPath) {
 }
 
 
-// Output
+////////////
+// Output //
+////////////
 
 function generateEpicycles(complex_vals, n_epicycles) {
 	// create circles and epicycle data
@@ -81,4 +93,12 @@ function generateEpicycles(complex_vals, n_epicycles) {
 
 function displayAnimation(epicycle_data) {
 	// Draw circles onto canvas and create animation
+}
+
+///////////
+// Main	 //
+///////////
+
+function main(){
+	setup();
 }
