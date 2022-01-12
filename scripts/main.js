@@ -82,6 +82,7 @@ function processImage(){
 ///////////////////////////////
 // API Drawing Functionality //
 ///////////////////////////////
+
 function getRandomDrawing(){
 	// Get user selected category
 	getCategory()
@@ -114,12 +115,39 @@ function createSVG(path) {
 	// create SVG from path
 }
 
+function convertToComplex(path){
+	var c_path = [];
+	for (let i = 0; i < path.length; i++) {
+		var x = new complex(path[i].x, path[i].y);
+		c_path.push(x);
+		
+	}
+	return c_path;
+}
 
 
 /////////////////////////////////
 // Discrete Fourier Transform  //
 /////////////////////////////////
 
+class complex{
+	constructor(a, b){
+		this.re = a;
+		this.im = b;
+	}
+
+	add(x){
+		const re = this.re + x.re;
+		const im = this.im + x.im;
+		return new complex(re, im);
+	}
+
+	multiply(x){
+		const re = this.re * x.re - this.im * x.im;
+		const im = this.re * x.im + this.im * x.re;
+		return new complex(re, im);
+	}
+}
 
 function dft(vals) {
 	// Generate data for epicycles using path
@@ -131,21 +159,22 @@ function dft(vals) {
 	// Iterate through each val
 	for (var k = 0; k < N; k++) {
 
-		var re = 0;
-		var im = 0;
+		var sum = new complex(0,0);
 
 		for (n=0; n < N; n++) {
 
 			let angle = 2*Math.PI*k*n/N
-			re += vals[n] * Math.cos(angle);
-			im -= vals[n] * Math.sin(angle);
+			let c = new complex(cos(angle), -sin(angle));
+			sum = sum.add(x[n].multiply(c));
 		}
+		sum.re = sum.re / N;
+		sum.im = sum.im / N;
 
-		let amp = Math.sqrt(re*re + im*im);
-		let phase = Math.atan2(im, re);
+		let amp = Math.sqrt(sum.re*sum.re + sum.im*sum.im);
+		let phase = Math.atan2(sum.im, sum.re);
 		let freq = k;
 
-		output[k] = {re, im, freq, amp, phase};
+		output[k] = {re:sum.re, im:sum.im, freq, amp, phase};
 	}
 	return output;
 }
