@@ -1,14 +1,15 @@
-function setup(){
+// Create Canvas
+const canvasplaceholder = document.getElementById("canvas-placeholder");
+const canvas = document.createElement("canvas");
+canvasplaceholder.replaceWith(canvas);
+const ctx = canvas.getContext("2d");
+const cw = 800;
+const ch = 800;
+canvas.width = cw;
+canvas.height = ch;
+canvas.classList.add("canvas-container");
 
-	// Create Canvas
-	const canvasplaceholder = document.getElementById("canvas-placeholder");
-	const canvas = document.createElement("canvas");
-	canvasplaceholder.replaceWith(canvas);
-	const ctx = canvas.getContext("2d");
-	const cw = 800;
-	const ch = 800;
-	canvas.width = cw;
-	canvas.height = ch;
+function setup(){
 	
 	// Initialise API
 }
@@ -17,9 +18,51 @@ function setup(){
 ////////////////////////////////
 // User Drawing functionality //
 ////////////////////////////////
+
+var inputpath = [];
 function getCanvas(){
 	// Get convas drawing points
 	// Return Path
+	
+	inputpath = [];
+
+	var x,y,prevx,prevy = 0;
+	canvas.addEventListener("mousemove", function(e){
+		prevx = x;
+		prevy = y;
+		x = e.pageX - this.offsetLeft;
+		y = e.pageY - this.offsetTop;
+	})
+
+	canvas.addEventListener("mousedown", function(e){
+		ctx.clearRect(0,0,canvas.width,canvas.height);
+		canvas.addEventListener("mousemove", trace);
+		inputpath = [];
+	});
+
+	canvas.addEventListener("mouseup", function(){
+		canvas.removeEventListener("mousemove", trace);
+		
+	});
+
+	// canvas.addEventListener("mouseout", function(){
+	// 	canvas.removeEventListener("mousemove", trace);
+	// });
+
+	function trace(){
+		ctx.lineWidth = 3;
+		ctx.lineJoin = 'round';
+		ctx.lineCap = 'round';
+		ctx.strokeStyle = 'black';
+		ctx.beginPath();
+		ctx.moveTo(prevx,prevy);
+		ctx.lineTo(x,y);
+		ctx.closePath();
+		ctx.stroke();
+		inputpath.push({x,y})
+	}
+
+	return inputpath;
 }
 
 
@@ -92,13 +135,17 @@ function dft(vals) {
 		var im = 0;
 
 		for (n=0; n < N; n++) {
-			
-			let angle = 2*pi*k*n/N
-			re += vals[n] * cos(angle);
-			im -= vals[n] * sin(angle);
+
+			let angle = 2*Math.PI*k*n/N
+			re += vals[n] * Math.cos(angle);
+			im -= vals[n] * Math.sin(angle);
 		}
 
-		output[k] = {re, im};
+		let amp = Math.sqrt(re*re + im*im);
+		let phase = Math.atan2(im, re);
+		let freq = k;
+
+		output[k] = {re, im, freq, amp, phase};
 	}
 	return output;
 }
@@ -123,4 +170,7 @@ function displayAnimation(epicycle_data) {
 
 function main(){
 	setup();
+	getCanvas();
 }
+
+main();
