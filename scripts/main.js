@@ -42,6 +42,7 @@ function getCanvas(){
 
 	canvas.addEventListener("mouseup", function(){
 		canvas.removeEventListener("mousemove", trace);
+		displayAnimation()
 		
 	});
 
@@ -184,13 +185,48 @@ function dft(vals) {
 // Output //
 ////////////
 
-function generateEpicycles(complex_vals, n_epicycles) {
+time = 0;
+
+
+function generateEpicycles(x, y, fourier_vals) {
 	// create circles and epicycle data
 	// Return epicycle data
-}
+	for (var i = 0; i < fourier_vals.length; i++) {
+		let prevx = x;
+		let prevy = y;
+		let freq = fourier_vals[i].freq;
+		let radius = fourier_vals[i].amp;
+		let phase = fourier_vals[i].phase;
+		x += radius * Math.cos(freq * time + phase);
+		y += radius * Math.sin(freq * time + phase);
 
-function displayAnimation(epicycle_data) {
+		ctx.beginPath();
+		ctx.arc(x, y, radius, 0, 2 * Math.PI);
+		ctx.stroke();
+
+		ctx.beginPath();
+		ctx.moveTo(prevx,prevy);
+		ctx.lineTo(x, y);
+		ctx.stroke();
+	}
+	return {x,y};
+}
+var trail = [];
+function displayAnimation() {
 	// Draw circles onto canvas and create animation
+	ctx.clearRect(0,0,cw,ch);
+	var point = generateEpicycles(cw/2, ch/2, dft(convertToComplex(inputpath)));
+	trail.push(point);
+	for (let x = 0; x < trail.length; x++){
+		ctx.beginPath();
+		ctx.arc(trail[x].x, trail[x].y, 1, 0, 2 * Math.PI);
+		ctx.stroke();
+	}
+	const dt = Math.PI*2 / inputpath.length;
+	time += dt;
+
+	requestAnimationFrame(displayAnimation);
+
 }
 
 ///////////
