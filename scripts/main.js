@@ -164,8 +164,8 @@ function dft(vals) {
 		for (n=0; n < N; n++) {
 
 			let angle = 2*Math.PI*k*n/N
-			let c = new complex(cos(angle), -sin(angle));
-			sum = sum.add(x[n].multiply(c));
+			let c = new complex(Math.cos(angle), -Math.sin(angle));
+			sum = sum.add(vals[n].multiply(c));
 		}
 		sum.re = sum.re / N;
 		sum.im = sum.im / N;
