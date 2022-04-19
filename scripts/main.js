@@ -8,6 +8,7 @@ const ch = 800;
 canvas.width = cw;
 canvas.height = ch;
 canvas.classList.add("canvas-container");
+var requestID;
 
 function setup(){
 	
@@ -18,7 +19,7 @@ function setup(){
 ////////////////////////////////
 // User Drawing functionality //
 ////////////////////////////////
-
+var fourier_path = [];
 var inputpath = [];
 function getCanvas(){
 	// Get convas drawing points
@@ -35,6 +36,7 @@ function getCanvas(){
 	})
 
 	canvas.addEventListener("mousedown", function(e){
+		cancelAnimationFrame(requestID);
 		ctx.clearRect(0,0,canvas.width,canvas.height);
 		canvas.addEventListener("mousemove", trace);
 		inputpath = [];
@@ -42,7 +44,9 @@ function getCanvas(){
 
 	canvas.addEventListener("mouseup", function(){
 		canvas.removeEventListener("mousemove", trace);
-		displayAnimation()
+		fourier_path = dft(convertToComplex(inputpath));
+		fourier_path.sort((a,b) => {return b.amp - a.amp});
+		displayAnimation(fourier_path);
 		
 	});
 
@@ -162,7 +166,7 @@ function dft(vals) {
 
 		var sum = new complex(0,0);
 
-		for (n=0; n < N; n++) {
+		for (n=0; n < N-4; n+=3) {
 
 			let angle = 2*Math.PI*k*n/N
 			let c = new complex(Math.cos(angle), -Math.sin(angle));
@@ -188,10 +192,20 @@ function dft(vals) {
 time = 0;
 
 
+// for safety (undefiend val)
+// fourier_vals = arr.filter(element => {
+// 	if (Object.keys(element).length !== 0) {
+// 	return true;
+// 	}
+
+// 	return false;
+// 	});
+// // 
+
 function generateEpicycles(x, y, fourier_vals) {
 	// create circles and epicycle data
 	// Return epicycle data
-	for (var i = 0; i < fourier_vals.length; i++) {
+	for (var i = 1; i < fourier_vals.length; i++) {
 		let prevx = x;
 		let prevy = y;
 		let freq = fourier_vals[i].freq;
@@ -215,7 +229,7 @@ var trail = [];
 function displayAnimation() {
 	// Draw circles onto canvas and create animation
 	ctx.clearRect(0,0,cw,ch);
-	var point = generateEpicycles(cw/2, ch/2, dft(convertToComplex(inputpath)));
+	var point = generateEpicycles(cw/2, ch/2, fourier_path);
 	trail.push(point);
 	for (let x = 0; x < trail.length; x++){
 		ctx.beginPath();
@@ -224,8 +238,12 @@ function displayAnimation() {
 	}
 	const dt = Math.PI*2 / inputpath.length;
 	time += dt;
-
-	requestAnimationFrame(displayAnimation);
+	if (time > Math.PI*2){
+		time = 0;
+		path = [];
+		trail = [];
+	}
+	requestID = requestAnimationFrame(displayAnimation);
 
 }
 
