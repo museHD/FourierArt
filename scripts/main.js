@@ -166,7 +166,7 @@ function dft(vals) {
 
 		var sum = new complex(0,0);
 
-		for (n=0; n < N-4; n+=3) {
+		for (n=0; n < N; n++) {
 
 			let angle = 2*Math.PI*k*n/N
 			let c = new complex(Math.cos(angle), -Math.sin(angle));
@@ -190,7 +190,7 @@ function dft(vals) {
 ////////////
 
 time = 0;
-
+var n_epicycles = 10;
 
 // for safety (undefiend val)
 // fourier_vals = arr.filter(element => {
@@ -202,10 +202,10 @@ time = 0;
 // 	});
 // // 
 
-function generateEpicycles(x, y, fourier_vals) {
+function generateEpicycles(x, y, fourier_vals, f_size) {
 	// create circles and epicycle data
 	// Return epicycle data
-	for (var i = 1; i < fourier_vals.length; i++) {
+	for (var i = 1; i < f_size; i++) {
 		let prevx = x;
 		let prevy = y;
 		let freq = fourier_vals[i].freq;
@@ -229,7 +229,7 @@ var trail = [];
 function displayAnimation() {
 	// Draw circles onto canvas and create animation
 	ctx.clearRect(0,0,cw,ch);
-	var point = generateEpicycles(cw/2, ch/2, fourier_path);
+	var point = generateEpicycles(cw/2, ch/2, fourier_path, n_epicycles);
 	trail.push(point);
 	for (let x = 0; x < trail.length; x++){
 		ctx.beginPath();
