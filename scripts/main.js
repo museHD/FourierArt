@@ -9,6 +9,7 @@ canvas.width = cw;
 canvas.height = ch;
 canvas.classList.add("canvas-container");
 var requestID;
+var slider = document.getElementById("myRange");
 
 function setup(){
 	
@@ -45,6 +46,7 @@ function getCanvas(){
 	canvas.addEventListener("mouseup", function(){
 		canvas.removeEventListener("mousemove", trace);
 		fourier_path = dft(convertToComplex(inputpath));
+		slider.max = fourier_path.length;
 		fourier_path.sort((a,b) => {return b.amp - a.amp});
 		displayAnimation(fourier_path);
 		
@@ -229,7 +231,7 @@ var trail = [];
 function displayAnimation() {
 	// Draw circles onto canvas and create animation
 	ctx.clearRect(0,0,cw,ch);
-	var point = generateEpicycles(cw/2, ch/2, fourier_path, n_epicycles);
+	var point = generateEpicycles(cw/2, ch/2, fourier_path, slider.value);
 	trail.push(point);
 	for (let x = 0; x < trail.length; x++){
 		ctx.beginPath();
