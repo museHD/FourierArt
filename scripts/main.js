@@ -232,11 +232,29 @@ function displayAnimation() {
 	// Draw circles onto canvas and create animation
 	ctx.clearRect(0,0,cw,ch);
 	var point = generateEpicycles(cw/2, ch/2, fourier_path, slider.value);
+
+
+
+
 	trail.push(point);
-	for (let x = 0; x < trail.length; x++){
-		ctx.beginPath();
-		ctx.arc(trail[x].x, trail[x].y, 1, 0, 2 * Math.PI);
+	let prevx = trail[0].x;
+	let prevy = trail[0].y;
+
+
+	for (let x = 1; x < trail.length; x++){
+
+		ctx.moveTo(prevx,prevy);
+		ctx.lineTo(trail[x].x, trail[x].y);
 		ctx.stroke();
+		prevx = trail[x-1].x;
+		prevy = trail[x-1].y;
+
+	
+	// trail.push(point);
+	// for (let x = 0; x < trail.length; x++){
+	// 	ctx.beginPath();
+	// 	ctx.arc(trail[x].x, trail[x].y, 1, 0, 2 * Math.PI);
+	// 	ctx.stroke();
 	}
 	const dt = Math.PI*2 / inputpath.length;
 	time += dt;
@@ -259,3 +277,6 @@ function main(){
 }
 
 main();
+
+
+
