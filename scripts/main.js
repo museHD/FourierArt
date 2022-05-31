@@ -204,6 +204,46 @@ var n_epicycles = 10;
 // 	});
 // // 
 
+class Epicycle{
+	constructor(x,y,radius,phase){
+		this.x = x;
+		this.y = y;
+		this.radius = radius;
+		this.phase = phase;
+	}
+}
+
+class EpicycleController{
+	constructor(){
+		this.epicycles = [];
+	}
+
+	generateEpicycles(x, y, fourier_vals, f_size) {
+	// create circles and epicycle data
+	// Return epicycle data
+	for (var i = 1; i < f_size; i++) {
+		let prevx = x;
+		let prevy = y;
+		let freq = fourier_vals[i].freq;
+		let radius = fourier_vals[i].amp;
+		let phase = fourier_vals[i].phase;
+		x += radius * Math.cos(freq * time + phase);
+		y += radius * Math.sin(freq * time + phase);
+		this.epicycles.push(new Epicycle(x,y,radius,phase));
+
+		ctx.beginPath();
+		ctx.arc(x, y, radius, 0, 2 * Math.PI);
+		ctx.stroke();
+
+		ctx.beginPath();
+		ctx.moveTo(prevx,prevy);
+		ctx.lineTo(x, y);
+		ctx.stroke();
+	}
+	return {x,y};
+	}
+}
+
 function generateEpicycles(x, y, fourier_vals, f_size) {
 	// create circles and epicycle data
 	// Return epicycle data
@@ -226,7 +266,8 @@ function generateEpicycles(x, y, fourier_vals, f_size) {
 		ctx.stroke();
 	}
 	return {x,y};
-}
+	}
+
 var trail = [];
 function displayAnimation() {
 	// Draw circles onto canvas and create animation
