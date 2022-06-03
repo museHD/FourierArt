@@ -1,13 +1,22 @@
 // Create Canvas
-const canvasplaceholder = document.getElementById("canvas-placeholder");
-const canvas = document.createElement("canvas");
-canvasplaceholder.replaceWith(canvas);
+// const canvasplaceholder = document.getElementById("canvas-placeholder");
+const canvas = document.getElementById("layer1");
+// canvasplaceholder.replaceWith(canvas);
 const ctx = canvas.getContext("2d");
 const cw = 800;
 const ch = 800;
 canvas.width = cw;
 canvas.height = ch;
 canvas.classList.add("canvas-container");
+
+const canvas2 = document.getElementById("layer2");
+// canvasplaceholder.replaceWith(canvas);
+const ctx2 = canvas2.getContext("2d");
+canvas2.width = cw;
+canvas2.height = ch;
+canvas2.classList.add("canvas-container");
+
+
 var requestID;
 var slider = document.getElementById("myRange");
 
@@ -274,35 +283,38 @@ function displayAnimation() {
 	ctx.clearRect(0,0,cw,ch);
 	var point = generateEpicycles(cw/2, ch/2, fourier_path, slider.value);
 
+	ctx2.beginPath();
+	ctx2.arc(point.x, point.y, 1, 0, 2 * Math.PI);
+	ctx2.stroke();
 
 
+	// trail.push(point);
+	// let prevx = trail[0].x;
+	// let prevy = trail[0].y;
 
-	trail.push(point);
-	let prevx = trail[0].x;
-	let prevy = trail[0].y;
 
+	// for (let x = 1; x < trail.length; x++){
 
-	for (let x = 1; x < trail.length; x++){
-
-		ctx.moveTo(prevx,prevy);
-		ctx.lineTo(trail[x].x, trail[x].y);
-		ctx.stroke();
-		prevx = trail[x-1].x;
-		prevy = trail[x-1].y;
+	// 	ctx.moveTo(prevx,prevy);
+	// 	ctx.lineTo(trail[x].x, trail[x].y);
+	// 	ctx.stroke();
+	// 	prevx = trail[x-1].x;
+	// 	prevy = trail[x-1].y;
 
 	
-	// trail.push(point);
-	// for (let x = 0; x < trail.length; x++){
-	// 	ctx.beginPath();
-	// 	ctx.arc(trail[x].x, trail[x].y, 1, 0, 2 * Math.PI);
-	// 	ctx.stroke();
-	}
+	// // trail.push(point);
+	// // for (let x = 0; x < trail.length; x++){
+	// // 	ctx.beginPath();
+	// // 	ctx.arc(trail[x].x, trail[x].y, 1, 0, 2 * Math.PI);
+	// // 	ctx.stroke();
+	// }
 	const dt = Math.PI*2 / inputpath.length;
 	time += dt;
 	if (time > Math.PI*2){
 		time = 0;
 		path = [];
 		trail = [];
+		ctx2.clearRect(0,0,cw,ch);
 	}
 	requestID = requestAnimationFrame(displayAnimation);
 
