@@ -20,6 +20,7 @@ canvas2.classList.add("canvas-container");
 var requestID;
 var slider = document.getElementById("myRange");
 
+
 function setup(){
 	
 	// Initialise API
@@ -57,6 +58,7 @@ function getCanvas(){
 		fourier_path = dft(convertToComplex(inputpath));
 		slider.max = fourier_path.length;
 		fourier_path.sort((a,b) => {return b.amp - a.amp});
+		Controller.generateEpicycles(cw/2, ch/2, fourier_path, fourier_path.length);
 		displayAnimation(fourier_path);
 		
 	});
@@ -201,6 +203,7 @@ function dft(vals) {
 ////////////
 
 time = 0;
+dt = 0;
 var n_epicycles = 10;
 
 // for safety (undefiend val)
@@ -214,11 +217,36 @@ var n_epicycles = 10;
 // // 
 
 class Epicycle{
-	constructor(x,y,radius,phase){
+	constructor(x,y,freq,radius,phase){
 		this.x = x;
 		this.y = y;
+		this.freq = freq;
 		this.radius = radius;
 		this.phase = phase;
+		this.cache = [];
+		this.cachepos = 0;
+	}
+
+	loadNextCache(){
+		if (this.cachepos < this.cache.length - 1) {
+			this.cachepos += 1;
+		}
+		else {
+			this.cachepos = 0;
+		}
+		this.x = this.cache[this.cachepos];
+		this.y = this.cache[this.cachepos];
+	}
+
+	updateEpicycle(timenow){
+		this.x = this.radius * Math.cos(this.freq * timenow + this.phase);
+		this.y = this.radius * Math.sin(this.freq * timenow + this.phase);
+	}
+
+	updateCache(){
+		var pos = {x:this.x, y:this.y};
+		// console.log(pos);
+		this.cache.push(pos);
 	}
 }
 
@@ -228,34 +256,69 @@ class EpicycleController{
 	}
 
 	generateEpicycles(x, y, fourier_vals, f_size) {
-	// create circles and epicycle data
-	// Return epicycle data
-	for (var i = 1; i < f_size; i++) {
-		let prevx = x;
-		let prevy = y;
-		let freq = fourier_vals[i].freq;
-		let radius = fourier_vals[i].amp;
-		let phase = fourier_vals[i].phase;
-		x += radius * Math.cos(freq * time + phase);
-		y += radius * Math.sin(freq * time + phase);
-		this.epicycles.push(new Epicycle(x,y,radius,phase));
+		// create circles and epicycle data
+		// Return epicycle data
+		this.epicycles = [];
+		dt = Math.PI*2 / inputpath.length;
+		for (var i = 0; i < f_size; i++) {
+			let prevx = x;
+			let prevy = y;
+			let freq = fourier_vals[i].freq;
+			let radius = fourier_vals[i].amp;
+			let phase = fourier_vals[i].phase;
+			x += radius * Math.cos(freq * time + phase);
+			y += radius * Math.sin(freq * time + phase);
+			this.epicycles.push(new Epicycle(x,y,freq,radius,phase));
+		}
 
-		ctx.beginPath();
-		ctx.arc(x, y, radius, 0, 2 * Math.PI);
-		ctx.stroke();
+		// var cachetime = 0;
+		for (var ep = 0; ep < this.epicycles.length-1; ep++){
+			for (var cachetime = 0; cachetime < Math.PI*2; cachetime += dt) {
+				this.epicycles[ep].updateEpicycle(cachetime);
+				this.epicycles[ep].updateCache();
 
-		ctx.beginPath();
-		ctx.moveTo(prevx,prevy);
-		ctx.lineTo(x, y);
-		ctx.stroke();
-	}
+			}
+			
+		}		
+
+
 	return {x,y};
 	}
+
+	drawEpicycles(){
+		var prevx = this.epicycles[0].x;
+		var prevy = this.epicycles[0].y;
+		for (var ep = 1; ep < this.epicycles; ep++){
+			var currentepicycle = this.epicycles[ep];
+			ctx.beginPath();
+			ctx.arc(currentepicycle.x, currentepicycle.y, currentepicycle.radius, 0, 2 * Math.PI);
+			ctx.stroke();
+
+			ctx.beginPath();
+			ctx.moveTo(prevx,prevy);
+			ctx.lineTo(currentepicycle.x, currentepicycle.y);
+			ctx.stroke();
+
+			prevx = currentepicycle.x;
+			prevy = currentepicycle.y;
+			currentepicycle.loadNextCache();
+		}		
+	}
+
+	// intital updatepicycles with real time calcs and cache saving (maybe)
+	// updateEpicycles(){
+	// 	time += dt;
+	// 	for (var ep = 0; ep < this.epicycles; ep++){
+	// 		this.epicycles[ep].updateEpicycle();
+	// 	}
+	// }
 }
 
 function generateEpicycles(x, y, fourier_vals, f_size) {
 	// create circles and epicycle data
 	// Return epicycle data
+	console.log("draw");
+	dt = Math.PI*2 / inputpath.length;
 	for (var i = 1; i < f_size; i++) {
 		let prevx = x;
 		let prevy = y;
@@ -276,16 +339,18 @@ function generateEpicycles(x, y, fourier_vals, f_size) {
 	}
 	return {x,y};
 	}
-
+var Controller = new EpicycleController();
 var trail = [];
 function displayAnimation() {
 	// Draw circles onto canvas and create animation
 	ctx.clearRect(0,0,cw,ch);
-	var point = generateEpicycles(cw/2, ch/2, fourier_path, slider.value);
+	var point = Controller.epicycles[slider.value-1];
 
 	ctx2.beginPath();
 	ctx2.arc(point.x, point.y, 1, 0, 2 * Math.PI);
 	ctx2.stroke();
+
+	Controller.drawEpicycles();
 
 
 	// trail.push(point);
@@ -307,8 +372,7 @@ function displayAnimation() {
 	// // 	ctx.beginPath();
 	// // 	ctx.arc(trail[x].x, trail[x].y, 1, 0, 2 * Math.PI);
 	// // 	ctx.stroke();
-	// }
-	const dt = Math.PI*2 / inputpath.length;
+	// } 
 	time += dt;
 	if (time > Math.PI*2){
 		time = 0;
@@ -316,7 +380,12 @@ function displayAnimation() {
 		trail = [];
 		ctx2.clearRect(0,0,cw,ch);
 	}
-	requestID = requestAnimationFrame(displayAnimation);
+	var framesPerSecond = 60;
+	setTimeout(function() {
+	requestAnimationFrame(displayAnimation);
+
+	}, 1000 / framesPerSecond);
+	// requestID = requestAnimationFrame(displayAnimation);
 
 }
 
