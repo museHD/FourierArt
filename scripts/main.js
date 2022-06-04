@@ -58,7 +58,7 @@ function getCanvas(){
 		fourier_path = dft(convertToComplex(inputpath));
 		slider.max = fourier_path.length-1;
 		slider.value = slider.max-1;
-		slider.min = 2;
+		slider.min = 1;
 		fourier_path.sort((a,b) => {return b.amp - a.amp});
 		Controller.generateEpicycles(cw/2, ch/2, fourier_path, fourier_path.length);
 		displayAnimation(fourier_path);
@@ -230,12 +230,7 @@ class Epicycle{
 	}
 
 	loadNextCache(){
-		this.cache = this.cache.filter(element => {
-			if (Object.keys(element).length !== 0) {
-			return true;
-			}
-			return false;
-		})
+
 			
 		if (this.cachepos < this.cache.length - 2) {
 			this.cachepos += 1;
@@ -278,6 +273,7 @@ class EpicycleController{
 			x += radius * Math.cos(freq * time + phase);
 			y += radius * Math.sin(freq * time + phase);
 			this.epicycles.push(new Epicycle(x,y,freq,radius,phase));
+			
 			// this.epicycles[i-1].updateCache();
 		}
 		this.epicycles.sort((a,b) => {return b.radius - a.radius});
@@ -295,7 +291,15 @@ class EpicycleController{
 					currentepicycle.cache.push(pos);
 			}
 			
-		}		
+		}
+		for (var ep = 0; ep < this.epicycles.length-1; ep++){
+			this.epicycles[ep].cache = this.epicycles[ep].cache.filter(element => {
+				if (Object.keys(element).length !== 0) {
+				return true;
+				}
+				return false;
+			})
+		}
 
 
 	return {x,y};
@@ -304,8 +308,9 @@ class EpicycleController{
 	drawEpicycles(){
 		var prevx = this.epicycles[0].x;
 		var prevy = this.epicycles[0].y;
+		var currentepicycle = this.epicycles[0];
 		for (var ep = 0; ep < slider.value-1; ep++){
-			var currentepicycle = this.epicycles[ep];
+			currentepicycle = this.epicycles[ep];
 			ctx.beginPath();
 			ctx.arc(currentepicycle.x, currentepicycle.y, currentepicycle.radius, 0, 2 * Math.PI);
 			ctx.stroke();
@@ -319,12 +324,16 @@ class EpicycleController{
 
 			prevx = currentepicycle.x;
 			prevy = currentepicycle.y;
-			
-			currentepicycle.loadNextCache();
 
 		}
+		for (let i = 0; i < this.epicycles.length-1; i++) {
+			this.epicycles[i].loadNextCache();
+		}
 		ctx2.beginPath();
-		ctx2.arc(currentepicycle.x, currentepicycle.y, 1, 0, 2 * Math.PI);
+		ctx2.moveTo(prevx,prevy);
+		ctx2.lineTo(currentepicycle.x, currentepicycle.y);
+		
+		// ctx2.arc(currentepicycle.x, currentepicycle.y, 1, 0, 2 * Math.PI);
 		ctx2.stroke();
 		// if (currentepicycle.cachepos == 0){debugger;}		
 	}
@@ -362,9 +371,15 @@ function generateEpicycles(x, y, fourier_vals, f_size) {
 	}
 	return {x,y};
 	}
+
+
+const perf = document.getElementById('performance');
+
 Controller = new EpicycleController();
 var trail = [];
 function displayAnimation() {
+	t0 = performance.now();
+
 	// Draw circles onto canvas and create animation
 	ctx.clearRect(0,0,cw,ch);
 	// var point = Controller.epicycles[slider.value];
@@ -405,6 +420,9 @@ function displayAnimation() {
 		trail = [];
 		ctx2.clearRect(0,0,cw,ch);
 	}
+	//Frame Time Info
+	t1 = performance.now();
+	perf.innerHTML = `${(t1-t0).toFixed(3)}`;
 	var framesPerSecond = 60;
 	setTimeout(function() {
 	requestAnimationFrame(displayAnimation);
