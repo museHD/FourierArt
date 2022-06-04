@@ -57,6 +57,8 @@ function getCanvas(){
 		canvas.removeEventListener("mousemove", trace);
 		fourier_path = dft(convertToComplex(inputpath));
 		slider.max = fourier_path.length-1;
+		slider.value = slider.max-1;
+		slider.min = 2;
 		fourier_path.sort((a,b) => {return b.amp - a.amp});
 		Controller.generateEpicycles(cw/2, ch/2, fourier_path, fourier_path.length);
 		displayAnimation(fourier_path);
@@ -278,14 +280,19 @@ class EpicycleController{
 			this.epicycles.push(new Epicycle(x,y,freq,radius,phase));
 			// this.epicycles[i-1].updateCache();
 		}
-		this.epicycles.sort((a,b) => {return a.freq - b.freq});
+		this.epicycles.sort((a,b) => {return b.radius - a.radius});
 
 		// var cachetime = 0;
-		for (var ep = 0; ep < this.epicycles.length-1; ep++){
-			for (var cachetime = 0; cachetime < Math.PI*2; cachetime += dt) {
-				this.epicycles[ep].updateEpicycle(cachetime);
-				this.epicycles[ep].updateCache();
 
+		for (var cachetime = 0; cachetime < Math.PI*2; cachetime += dt){
+			var x = cw/2;
+			var y = ch/2;
+				for (var ep = 0; ep < this.epicycles.length-1; ep++){
+					var currentepicycle = this.epicycles[ep];
+					x += currentepicycle.radius * Math.cos(currentepicycle.freq * cachetime + currentepicycle.phase);
+					y += currentepicycle.radius * Math.sin(currentepicycle.freq * cachetime + currentepicycle.phase);
+					var pos = {x:x, y:y};
+					currentepicycle.cache.push(pos);
 			}
 			
 		}		
@@ -297,7 +304,7 @@ class EpicycleController{
 	drawEpicycles(){
 		var prevx = this.epicycles[0].x;
 		var prevy = this.epicycles[0].y;
-		for (var ep = 1; ep < slider.value-1; ep++){
+		for (var ep = 0; ep < slider.value-1; ep++){
 			var currentepicycle = this.epicycles[ep];
 			ctx.beginPath();
 			ctx.arc(currentepicycle.x, currentepicycle.y, currentepicycle.radius, 0, 2 * Math.PI);
@@ -308,11 +315,17 @@ class EpicycleController{
 			ctx.lineTo(currentepicycle.x, currentepicycle.y);
 			ctx.stroke();
 
+
+
 			prevx = currentepicycle.x;
 			prevy = currentepicycle.y;
+			
 			currentepicycle.loadNextCache();
 
 		}
+		ctx2.beginPath();
+		ctx2.arc(currentepicycle.x, currentepicycle.y, 1, 0, 2 * Math.PI);
+		ctx2.stroke();
 		// if (currentepicycle.cachepos == 0){debugger;}		
 	}
 
@@ -328,7 +341,6 @@ class EpicycleController{
 function generateEpicycles(x, y, fourier_vals, f_size) {
 	// create circles and epicycle data
 	// Return epicycle data
-	console.log("draw");
 	dt = Math.PI*2 / inputpath.length;
 	for (var i = 1; i < f_size; i++) {
 		let prevx = x;
@@ -355,13 +367,15 @@ var trail = [];
 function displayAnimation() {
 	// Draw circles onto canvas and create animation
 	ctx.clearRect(0,0,cw,ch);
-	var point = generateEpicycles(cw/2, ch/2, fourier_path, slider.value);
-	//Controller.epicycles[slider.value-1];
-	ctx2.beginPath();
-	ctx2.arc(point.x, point.y, 1, 0, 2 * Math.PI);
-	ctx2.stroke();
+	// var point = Controller.epicycles[slider.value];
+	// console.log(point);
+	// var point = generateEpicycles(cw/2, ch/2, fourier_path, slider.value);
+	//
+	// ctx2.beginPath();
+	// ctx2.arc(point.x, point.y, 1, 0, 2 * Math.PI);
+	// ctx2.stroke();
 
-	// Controller.drawEpicycles();
+	Controller.drawEpicycles();
 
 
 	// trail.push(point);
