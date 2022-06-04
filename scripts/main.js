@@ -1,5 +1,6 @@
 // Create Canvas
 // const canvasplaceholder = document.getElementById("canvas-placeholder");
+var jsfeat = require(["./scripts/jsfeat/build/jsfeat-min.js"]);
 const canvas = document.getElementById("layer1");
 // canvasplaceholder.replaceWith(canvas);
 const ctx = canvas.getContext("2d");
@@ -263,7 +264,7 @@ class EpicycleController{
 		// create circles and epicycle data
 		// Return epicycle data
 		this.epicycles = [];
-		dt = Math.PI*2 / inputpath.length;
+		dt = Math.PI*8 / inputpath.length;
 		for (var i = 1; i < f_size; i++) {
 			let prevx = x;
 			let prevy = y;
@@ -424,10 +425,11 @@ function displayAnimation() {
 		}
 	}
 	//Frame Time Info
-	t1 = performance.now();
-	perf.innerHTML = `${(t1-t0).toFixed(3)}`;
+	
 	var framesPerSecond = 60;
 	setTimeout(function() {
+		t1 = performance.now();
+		perf.innerHTML = `${(t1-t0).toFixed(3)}`;
 	requestAnimationFrame(displayAnimation);
 
 	}, 1000 / framesPerSecond);
