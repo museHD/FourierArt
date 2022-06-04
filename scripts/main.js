@@ -419,6 +419,9 @@ function displayAnimation() {
 		path = [];
 		trail = [];
 		ctx2.clearRect(0,0,cw,ch);
+		for (let i = 0; i < Controller.epicycles.length-1; i++) {
+			Controller.epicycles[i].cachepos = 0;
+		}
 	}
 	//Frame Time Info
 	t1 = performance.now();
