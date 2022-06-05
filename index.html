@@ -5,6 +5,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="icon" href="./imgs/favicon.ico" type="image/x-icon">
 	<title>Fourier Transform Art</title>
+	<script src="scripts/canny-min.js"></script>
+
 	<script defer src="./scripts/main.js"></script>
 	<!-- <script data-main="scripts/main" src="scripts/require.js"></script> -->
 	<link rel="stylesheet" type="text/css" href="css/main.css">
@@ -23,6 +25,19 @@
 		<input type="range" min="1" max="100" value="50" class="slider" id="myRange">
 	</div>
 	<div id="performance"></div>
+	<input type="file" id="image-input" accept="image/jpeg, image/png, image/jpg">
+	<img id="display-image"/>
+
+	<!-- <p><input type="file"  accept="image/*" name="image" id="file"  onchange="loadFile(event)" style="display: none;"></p>
+<p><label for="file" style="cursor: pointer;">Upload Image</label></p>
+<p><img id="output" width="200" /></p>
+
+<script>
+var loadFile = function(event) {
+	var image = document.getElementById('output');
+	image.src = URL.createObjectURL(event.target.files[0]);
+};
+</script> -->
 
 </body>
 

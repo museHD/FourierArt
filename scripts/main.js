@@ -41,6 +41,52 @@ function setup(){
 }
 
 
+const image_input = document.getElementById("image-input");
+// img_input.addEventListener("change",function(){})
+
+image_input.addEventListener("change", function(e) {
+	var reader = new FileReader();
+    reader.onload = function(event){
+        var img = new Image();
+        img.onload = function(){
+
+            ctx.drawImage(img,0,0,cw,ch);
+			var imgdata = CannyJS.canny(canvas);
+			imgdata.drawOn(canvas);
+			console.log(imgdata);
+        }
+        img.src = event.target.result;
+    }
+    reader.readAsDataURL(e.target.files[0]);     
+});
+
+
+var imgpath = [];
+function convertImgToArray(imagedata){
+	var png = imagedata.data;
+	for (var y = 0; y < ch; y++) {
+		for (var x = 0; x < cw; x++) {
+			var idx = (cw * y + x) << 2;
+			png.data[idx  ] = 255;
+			png.data[idx+1] = 218;
+			png.data[idx+2] = 185;
+			png.data[idx+3] = 255;
+		}
+	}
+}
+// var imgdata = CannyJS.canny(canvas);
+// imgdata.drawOn(canvas);
+// var ImageData = new GrayImageData(cw,ch);
+// imageData.loadCanvas(canavs);
+
+const image_output = document.getElementById("display-image");
+// image_output.src = img_to_process;
+
+
+  
+  
+  
+
 ////////////////////////////////
 // User Drawing functionality //
 ////////////////////////////////
