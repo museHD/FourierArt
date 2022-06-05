@@ -1,6 +1,19 @@
 // Create Canvas
 // const canvasplaceholder = document.getElementById("canvas-placeholder");
-var jsfeat = require(["./scripts/jsfeat/build/jsfeat-min.js"]);
+// var jsfeat = require(["./scripts/jsfeat/build/jsfeat-min.js"]);
+// const cannyEdgeDetector = require(["../node_modules/canny-edge-detector/src/index"]);
+var testpath = [];
+fetch("./test.json")
+.then(response => {
+   return response.json();
+})
+.then(function(data){
+	for (let i = 0; i < data.length; i++) {
+		let pos = {x:data[i][0],y:data[i][1]};
+		testpath.push(pos);
+		
+	}
+});
 const canvas = document.getElementById("layer1");
 // canvasplaceholder.replaceWith(canvas);
 const ctx = canvas.getContext("2d");
@@ -55,6 +68,7 @@ function getCanvas(){
 	});
 
 	canvas.addEventListener("mouseup", function(){
+		inputpath = testpath;
 		canvas.removeEventListener("mousemove", trace);
 		fourier_path = dft(convertToComplex(inputpath));
 		slider.max = fourier_path.length-1;
@@ -264,7 +278,7 @@ class EpicycleController{
 		// create circles and epicycle data
 		// Return epicycle data
 		this.epicycles = [];
-		dt = Math.PI*8 / inputpath.length;
+		dt = Math.PI*2 / inputpath.length;
 		for (var i = 1; i < f_size; i++) {
 			let prevx = x;
 			let prevy = y;
@@ -301,6 +315,8 @@ class EpicycleController{
 				return false;
 			})
 		}
+		ctx.lineWidth = 0.5;
+		ctx2.lineWidth = 2;
 
 
 	return {x,y};
