@@ -33,8 +33,7 @@ canvas2.classList.add("canvas-container");
 
 var requestID;
 var slider = document.getElementById("myRange");
-
-
+var cannyarray = [];
 function setup(){
 	
 	// Initialise API
@@ -46,19 +45,43 @@ const image_input = document.getElementById("image-input");
 
 image_input.addEventListener("change", function(e) {
 	var reader = new FileReader();
-    reader.onload = function(event){
-        var img = new Image();
-        img.onload = function(){
+	reader.onload = function(event){
+		var img = new Image();
+		img.onload = function(){
 
-            ctx.drawImage(img,0,0,cw,ch);
+			ctx.drawImage(img,0,0,cw,ch);
 			var imgdata = CannyJS.canny(canvas);
 			imgdata.drawOn(canvas);
-			console.log(imgdata);
-        }
-        img.src = event.target.result;
-    }
-    reader.readAsDataURL(e.target.files[0]);     
+			const newdata = ctx.getImageData(0, 0, cw, ch);
+			ctx.clearRect(0,0,canvas.width,canvas.height);
+			// console.log(typeof(imgdata));
+			imgToArray(newdata);
+			for (var i = 0; i < cannyarray.length; i++) {
+				ctx.beginPath();
+				ctx.arc(cannyarray[i][0]-cw, cannyarray[i][1]-ch, 1, 0, 2 * Math.PI);
+				ctx.stroke();
+				console.log('dar');
+
+			}
+			// console.log(imgdata);
+		}
+		img.src = event.target.result;
+	}
+	reader.readAsDataURL(e.target.files[0]);     
 });
+
+const divmod = (x, y) => [Math.floor(x / y), x % y];
+
+
+function imgToArray(imdata){
+	const data = imdata.data;
+	var numpix = data.length/4;
+	for (var x = 0; x < numpix; x++) {
+		var val = data[x*4+1];
+		if (val>0){cannyarray.push(divmod(x*4,cw));}
+		// if (val != 0){cannyarray.push({x});}
+	}
+}
 
 
 var imgpath = [];
@@ -127,7 +150,7 @@ function getCanvas(){
 	});
 
 	// canvas.addEventListener("mouseout", function(){
-	// 	canvas.removeEventListener("mousemove", trace);
+	//  canvas.removeEventListener("mousemove", trace);
 	// });
 
 	function trace(){
@@ -271,12 +294,12 @@ var n_epicycles = 10;
 
 // for safety (undefiend val)
 // fourier_vals = arr.filter(element => {
-// 	if (Object.keys(element).length !== 0) {
-// 	return true;
-// 	}
+//  if (Object.keys(element).length !== 0) {
+//  return true;
+//  }
 
-// 	return false;
-// 	});
+//  return false;
+//  });
 // // 
 
 class Epicycle{
@@ -398,15 +421,15 @@ class EpicycleController{
 		
 		// ctx2.arc(currentepicycle.x, currentepicycle.y, 1, 0, 2 * Math.PI);
 		ctx2.stroke();
-		// if (currentepicycle.cachepos == 0){debugger;}		
+		// if (currentepicycle.cachepos == 0){debugger;}        
 	}
 
 	// intital updatepicycles with real time calcs and cache saving (maybe)
 	// updateEpicycles(){
-	// 	time += dt;
-	// 	for (var ep = 0; ep < this.epicycles; ep++){
-	// 		this.epicycles[ep].updateEpicycle();
-	// 	}
+	//  time += dt;
+	//  for (var ep = 0; ep < this.epicycles; ep++){
+	//      this.epicycles[ep].updateEpicycle();
+	//  }
 	// }
 }
 
@@ -463,18 +486,18 @@ function displayAnimation() {
 
 	// for (let x = 1; x < trail.length; x++){
 
-	// 	ctx.moveTo(prevx,prevy);
-	// 	ctx.lineTo(trail[x].x, trail[x].y);
-	// 	ctx.stroke();
-	// 	prevx = trail[x-1].x;
-	// 	prevy = trail[x-1].y;
+	//  ctx.moveTo(prevx,prevy);
+	//  ctx.lineTo(trail[x].x, trail[x].y);
+	//  ctx.stroke();
+	//  prevx = trail[x-1].x;
+	//  prevy = trail[x-1].y;
 
 	
 	// // trail.push(point);
 	// // for (let x = 0; x < trail.length; x++){
-	// // 	ctx.beginPath();
-	// // 	ctx.arc(trail[x].x, trail[x].y, 1, 0, 2 * Math.PI);
-	// // 	ctx.stroke();
+	// //   ctx.beginPath();
+	// //   ctx.arc(trail[x].x, trail[x].y, 1, 0, 2 * Math.PI);
+	// //   ctx.stroke();
 	// } 
 	time += dt;
 	if (time > Math.PI*2){
@@ -500,7 +523,7 @@ function displayAnimation() {
 }
 
 ///////////
-// Main	 //
+// Main  //
 ///////////
 
 function main(){
