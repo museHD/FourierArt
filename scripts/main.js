@@ -56,13 +56,23 @@ image_input.addEventListener("change", function(e) {
 
 			// Convert EdgeDetected ImageData into x and y coordinates
 			imgToArray(newdata);
-
+			createPath(cannyarray);
 			// Test if cannyarray has valid x,y coordinates
-
+			var prevx = cannyarray[0].x;
+			var prevy = cannyarray[0].y;
 			for (var i = 0; i < cannyarray.length; i++) {
+				var x = cannyarray[i].x;
+				var y = cannyarray[i].y;
+				// ctx.beginPath();
+				// ctx.arc(,, 1, 0, 2 * Math.PI);
+				// ctx.stroke();
 				ctx.beginPath();
-				ctx.arc(cannyarray[i].x, cannyarray[i].y, 1, 0, 2 * Math.PI);
+				ctx.moveTo(prevx,prevy);
+				ctx.lineTo(x, y);
 				ctx.stroke();
+				prevx = x;
+				prevy = y;
+	
 				// console.log('dar');
 
 			}
@@ -178,11 +188,63 @@ function retrieveAPIImage(category){
 	// Get image from API according to category
 }
 
+function createPath(points){
 
+	var p0 = points[0];
+	var size = points.length;
 
+	// Swap points in an array based on index
+	function swap_points(a, b, array){
+		var temp = array[a];
+		array[a] = array[b];
+		array[b] = temp;
+	}
+
+	// Squared Dist b/w a & b
+	function dist(a,b){
+		return ((a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y));
+	}
+
+	// Orientation of points (0=colinear/1=clockwise/2=anticlockwise)
+	function orientation(p, q, r){
+		var val = ((q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y));
+		if (val == 0){return 0;}
+		if (val > 0){return 1;}
+		if (val < 0){return 2;}
+	}
+
+	function sortCompare(p1, p2){
+
+		var o = orientation(p0, p1, p2);
+		if (o == 0){
+			return( (dist(p0, p2) >= dist(p0, p1))? -1:1 );
+		}
+		return ( (o == 2)? -1:1 );
+
+	}
+
+	var ymin = points[0].y, min = 0;
+	for (let i = 0; i < size; i++) {
+		var y = points[i].y;
+
+		if ((y < ymin) || (ymin == y && points[i].x < points[min].x)){
+			ymin = points[i].y;
+			min = i;
+		}
+		
+	}
+
+	swap_points(0, min, points);
+	p0 = points[0];
+	points.sort(sortCompare);
+	
+}
 /////////////////
 // Processing  //
 /////////////////
+
+
+
 
 function vectorise(drawingPath){
 	tracepath()
@@ -396,10 +458,10 @@ class EpicycleController{
 			this.epicycles[i].loadNextCache();
 		}
 		ctx2.beginPath();
-		ctx2.moveTo(prevx,prevy);
-		ctx2.lineTo(currentepicycle.x, currentepicycle.y);
+		// ctx2.moveTo(prevx,prevy);
+		// ctx2.lineTo(currentepicycle.x, currentepicycle.y);
 		
-		// ctx2.arc(currentepicycle.x, currentepicycle.y, 1, 0, 2 * Math.PI);
+		ctx2.arc(currentepicycle.x, currentepicycle.y, 1, 0, 2 * Math.PI);
 		ctx2.stroke();
 		// if (currentepicycle.cachepos == 0){debugger;}        
 	}
