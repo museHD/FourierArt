@@ -53,13 +53,17 @@ image_input.addEventListener("change", function(e) {
 			imgdata.drawOn(canvas);
 			const newdata = ctx.getImageData(0, 0, cw, ch);
 			ctx.clearRect(0,0,canvas.width,canvas.height);
-			// console.log(typeof(imgdata));
+
+			// Convert EdgeDetected ImageData into x and y coordinates
 			imgToArray(newdata);
+
+			// Test if cannyarray has valid x,y coordinates
+
 			for (var i = 0; i < cannyarray.length; i++) {
 				ctx.beginPath();
-				ctx.arc(cannyarray[i][0]-cw, cannyarray[i][1]-ch, 1, 0, 2 * Math.PI);
+				ctx.arc(cannyarray[i].x, cannyarray[i].y, 1, 0, 2 * Math.PI);
 				ctx.stroke();
-				console.log('dar');
+				// console.log('dar');
 
 			}
 			// console.log(imgdata);
@@ -69,23 +73,11 @@ image_input.addEventListener("change", function(e) {
 	reader.readAsDataURL(e.target.files[0]);     
 });
 
-// Convert edges to [x,y]
-const divmod = (x, y) => [Math.floor(x / y), x % y];
-function imgToArray(imdata){
-	const data = imdata.data;
-	var numpix = data.length/4;
-	for (var x = 0; x < numpix; x++) {
-		var val = data[x*4+1];
-		if (val>0){cannyarray.push(divmod(x*4,cw));}
-		// if (val != 0){cannyarray.push({x});}
-	}
-}
-
 
 
 const image_output = document.getElementById("display-image");
 // image_output.src = img_to_process;
-  
+
 
 ////////////////////////////////
 // User Drawing functionality //
@@ -99,6 +91,8 @@ function getCanvas(){
 	inputpath = [];
 
 	var x,y,prevx,prevy = 0;
+
+
 	canvas.addEventListener("mousemove", function(e){
 		prevx = x;
 		prevy = y;
@@ -114,7 +108,7 @@ function getCanvas(){
 	});
 
 	canvas.addEventListener("mouseup", function(){
-		inputpath = testpath;
+		inputpath = cannyarray;
 		canvas.removeEventListener("mousemove", trace);
 		fourier_path = dft(convertToComplex(inputpath));
 		slider.max = fourier_path.length-1;
@@ -156,9 +150,18 @@ function getImage(){
 	// Return Path
 }
 
-function processImage(){
 	// Convert image into path of points
-}
+	// Convert edges to [x,y]
+	const divmod = (x, y) => [(x % y)/4, Math.floor(x / y)];
+	function imgToArray(imdata){
+		const data = imdata.data;
+		var numpix = data.length/4;
+		for (var x = 0; x < data.length; x+=4) {
+			var val = data[x+1];
+			if (val>50){cords = divmod(x,4*cw); cannyarray.push({x:cords[0],y:cords[1]});}
+			// if (val != 0){cannyarray.push({x});}
+		}
+	}
 
 ///////////////////////////////
 // API Drawing Functionality //
