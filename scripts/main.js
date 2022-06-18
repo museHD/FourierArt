@@ -1,7 +1,5 @@
 // Create Canvas
 // const canvasplaceholder = document.getElementById("canvas-placeholder");
-// var jsfeat = require(["./scripts/jsfeat/build/jsfeat-min.js"]);
-// const cannyEdgeDetector = require(["../node_modules/canny-edge-detector/src/index"]);
 var testpath = [];
 fetch("./test.json")
 .then(response => {
@@ -14,8 +12,9 @@ fetch("./test.json")
 		
 	}
 });
+
+// Setting up Canvases
 const canvas = document.getElementById("layer1");
-// canvasplaceholder.replaceWith(canvas);
 const ctx = canvas.getContext("2d");
 const cw = 800;
 const ch = 800;
@@ -24,7 +23,6 @@ canvas.height = ch;
 canvas.classList.add("canvas-container");
 
 const canvas2 = document.getElementById("layer2");
-// canvasplaceholder.replaceWith(canvas);
 const ctx2 = canvas2.getContext("2d");
 canvas2.width = cw;
 canvas2.height = ch;
@@ -39,9 +37,10 @@ function setup(){
 	// Initialise API
 }
 
-
+// Setting up file upload
+// Receive uploaded file --> draw image on canvas --> EdgeDetection --> Draw EdgeDetection onto canvas --> read canvas as ImageData --> Clear canvas
+// Fix to automatically get ImageData later
 const image_input = document.getElementById("image-input");
-// img_input.addEventListener("change",function(){})
 
 image_input.addEventListener("change", function(e) {
 	var reader = new FileReader();
@@ -70,9 +69,8 @@ image_input.addEventListener("change", function(e) {
 	reader.readAsDataURL(e.target.files[0]);     
 });
 
+// Convert edges to [x,y]
 const divmod = (x, y) => [Math.floor(x / y), x % y];
-
-
 function imgToArray(imdata){
 	const data = imdata.data;
 	var numpix = data.length/4;
@@ -84,30 +82,9 @@ function imgToArray(imdata){
 }
 
 
-var imgpath = [];
-function convertImgToArray(imagedata){
-	var png = imagedata.data;
-	for (var y = 0; y < ch; y++) {
-		for (var x = 0; x < cw; x++) {
-			var idx = (cw * y + x) << 2;
-			png.data[idx  ] = 255;
-			png.data[idx+1] = 218;
-			png.data[idx+2] = 185;
-			png.data[idx+3] = 255;
-		}
-	}
-}
-// var imgdata = CannyJS.canny(canvas);
-// imgdata.drawOn(canvas);
-// var ImageData = new GrayImageData(cw,ch);
-// imageData.loadCanvas(canavs);
 
 const image_output = document.getElementById("display-image");
 // image_output.src = img_to_process;
-
-
-  
-  
   
 
 ////////////////////////////////
