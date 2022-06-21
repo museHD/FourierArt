@@ -31,7 +31,7 @@ canvas2.classList.add("canvas-container");
 
 var requestID;
 var slider = document.getElementById("myRange");
-var cannyarray = [];
+var cannyarray = []
 function setup(){
 	
 	// Initialise API
@@ -56,7 +56,11 @@ image_input.addEventListener("change", function(e) {
 
 			// Convert EdgeDetected ImageData into x and y coordinates
 			imgToArray(newdata);
-			createPath(cannyarray);
+			var svgstr = ImageTracer.imagedataToSVG( newdata, { ltres:0.1, qtres:1} );
+			console.log(svgstr);
+			var sol = solve(cannyarray,0.79);
+			cannyarray = sol.map(i => cannyarray[i]);
+			// createPath(cannyarray);
 			// Test if cannyarray has valid x,y coordinates
 			var prevx = cannyarray[0].x;
 			var prevy = cannyarray[0].y;
@@ -79,6 +83,8 @@ image_input.addEventListener("change", function(e) {
 			// console.log(imgdata);
 		}
 		img.src = event.target.result;
+		console.log(e.target.files[0]);
+		
 	}
 	reader.readAsDataURL(e.target.files[0]);     
 });
@@ -164,13 +170,24 @@ function getImage(){
 	// Convert edges to [x,y]
 	const divmod = (x, y) => [(x % y)/4, Math.floor(x / y)];
 	function imgToArray(imdata){
+		var out = [];
 		const data = imdata.data;
 		var numpix = data.length/4;
 		for (var x = 0; x < data.length; x+=4) {
 			var val = data[x+1];
-			if (val>50){cords = divmod(x,4*cw); cannyarray.push({x:cords[0],y:cords[1]});}
+			if (val>50){
+				var cords = divmod(x,4*cw);
+				// Ensure x and y are within canvas bounds
+				if ((1 < cords[0]) && (cords[0] < 790) && (1 < cords[1]) && (cords[1] < 790)){
+					cannyarray.push({x:cords[0],y:cords[1]});
+				}
+				else{
+					// console.log(cords)
+				}
+			}
 			// if (val != 0){cannyarray.push({x});}
 		}
+		// cannyarray = [...new Set(out)];
 	}
 
 ///////////////////////////////
@@ -188,9 +205,73 @@ function retrieveAPIImage(category){
 	// Get image from API according to category
 }
 
+// FOR TESTING
+function draw(ar){
+	let prevx = ar[0].x;
+	let prevy = ar[0].y;
+	for (let i = 0; i < ar.length; i++) {
+		var x = ar[i].x;
+		var y = ar[i].y;
+		ctx.beginPath();
+		ctx.moveTo(prevx,prevy);
+		ctx.lineTo(x, y);
+		ctx.stroke();
+		prevx = x;
+		prevy = y;
+	}
+
+}
+function containsObject(obj, list) {
+    var i;
+    for (i = 0; i < list.length; i++) {
+        if (list[i] === obj) {
+            return i;
+        }
+    }
+
+    return false;
+}
+
+function sortPath(points) {
+	var out = [];
+	const r = 5;
+	for (let i = 0; i < points.length; i++) {
+		var point = points[i];
+		for (var scout = 1; scout < r; scout++) {
+			// Ensure point is not already in outarray
+			if (out.indexOf(point) == -1){
+				var positions = {
+					up:{x:point.x, y:point.y - scout},
+					top_right:{x:point.x + scout, y:point.y - scout},
+					right:{x:point.x + scout, y:point.y},
+					bottom_right:{x:point.x + scout, y:point.y + scout},
+					bottom:{x:point.x, y:point.y + scout},
+					bottom_left:{x:point.x - scout, y:point.y + scout},
+					left:{x:point.x - scout, y:point.y},
+					top_left:{x:point.x - scout, y:point.y - scout}
+				}
+
+				// OBJECTS PASSED BY REF so doesn't check with given points
+				for (const position in positions) {
+					// console.log(position);
+					// console.log(containsObject(position, points));
+					var nextindex = containsObject(position, points);
+					if (nextindex > 0){
+						out.push(points[nextindex]);
+						points.splice(i+1,0,points[nextindex]);
+					}
+				}
+			}
+		}
+	}
+	return out;
+	
+}
+
+
 function createPath(points){
 
-	var p0 = points[0];
+	// var p0 = points[0];
 	var size = points.length;
 
 	// Swap points in an array based on index
@@ -209,41 +290,167 @@ function createPath(points){
 	function orientation(p, q, r){
 		var val = ((q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y));
 		if (val == 0){return 0;}
-		if (val > 0){return 1;}
-		if (val < 0){return 2;}
+		// if (val > 0){return 1;}
+		// if (val < 0){return 2;}
+		return (val > 0)? 1: 2;
 	}
 
 	function sortCompare(p1, p2){
 
 		var o = orientation(p0, p1, p2);
 		if (o == 0){
-			return( (dist(p0, p2) >= dist(p0, p1))? -1:1 );
+			return (dist(p0, p2) >= dist(p0, p1))? -1:1;
 		}
-		return ( (o == 2)? -1:1 );
+		return (o == 2)? -1:1;
 
 	}
 
-	var ymin = points[0].y, min = 0;
-	for (let i = 0; i < size; i++) {
+
+	var ymin = points[0].y;
+	var min = 0;
+	for (let i = 1; i < size; i++) {
 		var y = points[i].y;
 
-		if ((y < ymin) || (ymin == y && points[i].x < points[min].x)){
+		if ((y > ymin) || ((ymin == y) && (points[i].x < points[min].x))){
 			ymin = points[i].y;
 			min = i;
 		}
 		
 	}
 
-	swap_points(0, min, points);
+	// swap_points(0, min, points);
 	p0 = points[0];
 	points.sort(sortCompare);
+	// draw(points);
 	
 }
 /////////////////
 // Processing  //
 /////////////////
 
+function arrToXY (data,out){
+	for (let i = 0; i < data.length; i++) {
+		let pos = {x:data[i][0],y:data[i][1]};
+		out.push(pos);
+	}
+}
 
+
+/**
+ * @private
+ */
+ function Path(points) {
+    this.points = points;
+    this.order = new Array(points.length);
+    for(var i=0; i<points.length; i++) this.order[i] = i;
+    this.distances = new Array(points.length * points.length);
+    for(var i=0; i<points.length; i++)
+      for(var j=0; j<points.length; j++)
+        this.distances[j + i*points.length] = distance(points[i], points[j]);
+  }
+  Path.prototype.change = function(temp) {
+    var i = this.randomPos(), j = this.randomPos();
+    var delta = this.delta_distance(i, j);
+    if (delta < 0 || Math.random() < Math.exp(-delta / temp)) {
+      this.swap(i,j);
+    }
+  };
+  Path.prototype.size = function() {
+    var s = 0;
+    for (var i=0; i<this.points.length; i++) {
+      s += this.distance(i, ((i+1)%this.points.length));
+    }
+    return s;
+  };
+  Path.prototype.swap = function(i,j) {
+    var tmp = this.order[i];
+    this.order[i] = this.order[j];
+    this.order[j] = tmp;
+  };
+  Path.prototype.delta_distance = function(i, j) {
+    var jm1 = this.index(j-1),
+        jp1 = this.index(j+1),
+        im1 = this.index(i-1),
+        ip1 = this.index(i+1);
+    var s = 
+        this.distance(jm1, i  )
+      + this.distance(i  , jp1)
+      + this.distance(im1, j  )
+      + this.distance(j  , ip1)
+      - this.distance(im1, i  )
+      - this.distance(i  , ip1)
+      - this.distance(jm1, j  )
+      - this.distance(j  , jp1);
+    if (jm1 === i || jp1 === i)
+      s += 2*this.distance(i,j); 
+    return s;
+  };
+  Path.prototype.index = function(i) {
+    return (i + this.points.length) % this.points.length;
+  };
+  Path.prototype.access = function(i) {
+    return this.points[this.order[this.index(i)]];
+  };
+  Path.prototype.distance = function(i, j) {
+    return this.distances[this.order[i] * this.points.length + this.order[j]];
+  };
+  // Random index between 1 and the last position in the array of points
+  Path.prototype.randomPos = function() {
+    return 1 + Math.floor(Math.random() * (this.points.length - 1));
+  };
+  
+  /**
+   * Solves the following problem:
+   *  Given a list of points and the distances between each pair of points,
+   *  what is the shortest possible route that visits each point exactly
+   *  once and returns to the origin point?
+   *
+   * @param {Point[]} points The points that the path will have to visit.
+   * @param {Number} [temp_coeff=0.999] changes the convergence speed of the algorithm: the closer to 1, the slower the algorithm and the better the solutions.
+   * @param {Function} [callback=] An optional callback to be called after each iteration.
+   *
+   * @returns {Number[]} An array of indexes in the original array. Indicates in which order the different points are visited.
+   *
+   * @example
+   * var points = [
+   *       new salesman.Point(2,3)
+   *       //other points
+   *     ];
+   * var solution = salesman.solve(points);
+   * var ordered_points = solution.map(i => points[i]);
+   * // ordered_points now contains the points, in the order they ought to be visited.
+   **/
+  function solve(points, temp_coeff, callback) {
+    var path = new Path(points);
+    if (points.length < 2) return path.order; // There is nothing to optimize
+    if (!temp_coeff)
+      temp_coeff = 1 - Math.exp(-10 - Math.min(points.length,1e6)/1e5);
+    var has_callback = typeof(callback) === "function";
+  
+    for (var temperature = 100 * distance(path.access(0), path.access(1));
+             temperature > 1e-6;
+             temperature *= temp_coeff) {
+      path.change(temperature);
+      if (has_callback) callback(path.order);
+    }
+    return path.order;
+  };
+  
+  /**
+   * Represents a point in two dimensions.
+   * @class
+   * @param {Number} x abscissa
+   * @param {Number} y ordinate
+   */
+  function Point(x, y) {
+    this.x = x;
+    this.y = y;
+  };
+  
+  function distance(p, q) {
+    var dx = p.x - q.x, dy = p.y - q.y;
+    return Math.sqrt(dx*dx + dy*dy);
+  }
 
 
 function vectorise(drawingPath){
@@ -330,8 +537,8 @@ function dft(vals) {
 // Output //
 ////////////
 
-time = 0;
-dt = 0;
+var time = 0;
+var dt = 0;
 var n_epicycles = 10;
 
 // for safety (undefiend val)
@@ -503,7 +710,7 @@ function generateEpicycles(x, y, fourier_vals, f_size) {
 
 const perf = document.getElementById('performance');
 
-Controller = new EpicycleController();
+var Controller = new EpicycleController();
 var trail = [];
 function displayAnimation() {
 	t0 = performance.now();
