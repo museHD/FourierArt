@@ -24,15 +24,20 @@ function imgToArray(imdata){
 
 
 // Input array of coordinates and draw on canvas
-function draw(ar){
+function draw(ar, dot=false){
 	let prevx = ar[0].x;
 	let prevy = ar[0].y;
 	for (let i = 0; i < ar.length; i++) {
 		var x = ar[i].x;
 		var y = ar[i].y;
 		ctx.beginPath();
-		ctx.moveTo(prevx,prevy);
-		ctx.lineTo(x, y);
+        if (dot){
+            ctx.arc(x, y, 1, 0, 2 * Math.PI);
+        }
+        else{
+            ctx.moveTo(prevx,prevy);
+            ctx.lineTo(x, y);
+        }
 		ctx.stroke();
 		prevx = x;
 		prevy = y;

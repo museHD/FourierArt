@@ -57,10 +57,10 @@ image_input.addEventListener("change", function(e) {
 
 			// Convert EdgeDetected ImageData into x and y coordinates
 			imgToArray(newdata);
-			var svgstr = ImageTracer.imagedataToSVG( newdata, { ltres:0.1, qtres:1} );
-			console.log(svgstr);
-			var sol = solve(cannyarray,0.79);
-			cannyarray = sol.map(i => cannyarray[i]);
+			// var svgstr = ImageTracer.imagedataToSVG( newdata, { ltres:0.1, qtres:1} );
+			// console.log(svgstr);
+			// var sol = solve(cannyarray,0.79);
+			// cannyarray = sol.map(i => cannyarray[i]);
 			// createPath(cannyarray);
 			// Test if cannyarray has valid x,y coordinates
 			var prevx = cannyarray[0].x;
@@ -135,7 +135,7 @@ function getCanvas(){
 	});
 
 	canvas.addEventListener("mouseup", function(){
-		// inputpath = cannyarray;
+		inputpath = cannyarray;
 		canvas.removeEventListener("mousemove", trace);
 		fourier_path = dft(convertToComplex(inputpath));
 		slider.max = fourier_path.length-1;
