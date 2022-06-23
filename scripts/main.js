@@ -99,6 +99,16 @@ const image_output = document.getElementById("display-image");
 ////////////////////////////////
 // User Drawing functionality //
 ////////////////////////////////
+
+function activateUserDrawing(){
+	fourier_path = [];
+	inputpath = [];
+	drawmethod = 0; //Draw connecting lines b/w points
+
+	ctx.clearRect(0,0,800,800);
+	ctx2.clearRect(0,0,800,800);
+}
+
 var fourier_path = [];
 var inputpath = [];
 function getCanvas(){
@@ -618,11 +628,16 @@ class EpicycleController{
 		for (let i = 0; i < this.epicycles.length-1; i++) {
 			this.epicycles[i].loadNextCache();
 		}
-		ctx2.beginPath();
-		// ctx2.moveTo(prevx,prevy);
-		// ctx2.lineTo(currentepicycle.x, currentepicycle.y);
 		
-		ctx2.arc(currentepicycle.x, currentepicycle.y, 1, 0, 2 * Math.PI);
+		// Draws points vs lines depending on drawing method
+		ctx2.beginPath();
+		if (drawmethod == 0) {
+			ctx2.moveTo(prevx,prevy);
+			ctx2.lineTo(currentepicycle.x, currentepicycle.y);		
+		}
+		else{
+			ctx2.arc(currentepicycle.x, currentepicycle.y, 1, 0, 2 * Math.PI);
+		}
 		ctx2.stroke();
 		// if (currentepicycle.cachepos == 0){debugger;}        
 	}
