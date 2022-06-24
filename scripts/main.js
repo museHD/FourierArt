@@ -43,52 +43,7 @@ function setup(){
 // Fix to automatically get ImageData later
 const image_input = document.getElementById("image-input");
 
-image_input.addEventListener("change", function(e) {
-	var reader = new FileReader();
-	reader.onload = function(event){
-		var img = new Image();
-		img.onload = function(){
-
-			ctx.drawImage(img,0,0,cw,ch);
-			var imgdata = CannyJS.canny(canvas);
-			imgdata.drawOn(canvas);
-			const newdata = ctx.getImageData(0, 0, cw, ch);
-			ctx.clearRect(0,0,canvas.width,canvas.height);
-
-			// Convert EdgeDetected ImageData into x and y coordinates
-			imgToArray(newdata);
-			// var svgstr = ImageTracer.imagedataToSVG( newdata, { ltres:0.1, qtres:1} );
-			// console.log(svgstr);
-			// var sol = solve(cannyarray,0.79);
-			// cannyarray = sol.map(i => cannyarray[i]);
-			// createPath(cannyarray);
-			// Test if cannyarray has valid x,y coordinates
-			var prevx = cannyarray[0].x;
-			var prevy = cannyarray[0].y;
-			for (var i = 0; i < cannyarray.length; i++) {
-				var x = cannyarray[i].x;
-				var y = cannyarray[i].y;
-				// ctx.beginPath();
-				// ctx.arc(,, 1, 0, 2 * Math.PI);
-				// ctx.stroke();
-				ctx.beginPath();
-				ctx.moveTo(prevx,prevy);
-				ctx.lineTo(x, y);
-				ctx.stroke();
-				prevx = x;
-				prevy = y;
-	
-				// console.log('dar');
-
-			}
-			// console.log(imgdata);
-		}
-		img.src = event.target.result;
-		console.log(e.target.files[0]);
-		
-	}
-	reader.readAsDataURL(e.target.files[0]);     
-});
+image_input.addEventListener("change", receiveImage);
 
 
 
@@ -100,17 +55,20 @@ const image_output = document.getElementById("display-image");
 // User Drawing functionality //
 ////////////////////////////////
 
+var fourier_path = [];
+var inputpath = [];
+
 function activateUserDrawing(){
 	fourier_path = [];
 	inputpath = [];
 	drawmethod = 0; //Draw connecting lines b/w points
+	hideAllSettings();
 
 	ctx.clearRect(0,0,800,800);
 	ctx2.clearRect(0,0,800,800);
 }
 
-var fourier_path = [];
-var inputpath = [];
+
 function getCanvas(){
 	// Get convas drawing points
 	// Return Path
@@ -135,7 +93,7 @@ function getCanvas(){
 	});
 
 	canvas.addEventListener("mouseup", function(){
-		inputpath = cannyarray;
+		// inputpath = cannyarray;
 		canvas.removeEventListener("mousemove", trace);
 		fourier_path = dft(convertToComplex(inputpath));
 		slider.max = fourier_path.length-1;
@@ -174,11 +132,12 @@ function getCanvas(){
 
 function activateFileDrawing(){
 	drawmethod = 1; //Set draw method to points
-
+	hideAllSettings();
 	ctx.clearRect(0,0,800,800);
 	ctx2.clearRect(0,0,800,800);
 
 	cannyarray = [];
+	document.getElementById("img-settings").style.display = "block";
 
 
 }
@@ -228,6 +187,7 @@ function sortPath(points) {
 					// console.log(position);
 					// console.log(containsObject(position, points));
 					var nextindex = containsObject(position, points);
+					console.log(nextindex);
 					if (nextindex > 0){
 						out.push(points[nextindex]);
 						points.splice(i+1,0,points[nextindex]);
@@ -735,7 +695,7 @@ function displayAnimation() {
 		perf.innerHTML = `${(t1-t0).toFixed(3)}`;
 	requestAnimationFrame(displayAnimation);
 
-	}, 1000 / framesPerSecond);
+	}, 1000/framesPerSecond);
 	// requestID = requestAnimationFrame(displayAnimation);
 
 }

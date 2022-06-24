@@ -49,8 +49,10 @@ function draw(ar, dot=false){
 // Check if array contains provided object 
 function containsObject(obj, list) {
     var i;
+    obx = obj.x;
+    oby = obj.y;
     for (i = 0; i < list.length; i++) {
-        if (list[i] === obj) {
+        if ((list[i][0] == obj.x) && (list[i][1] == obj.y)) {
             return i;
         }
     }
@@ -64,4 +66,62 @@ function arrToXY (data,out){
 		let pos = {x:data[i][0],y:data[i][1]};
 		out.push(pos);
 	}
+}
+
+function hideAllSettings() {
+    const settings = document.getElementsByClassName("settings");
+    for (let index = 0; index < settings.length; index++) {
+        settings[index].style.display = "none"
+    }
+
+    
+}
+
+
+function receiveImage(e) {
+	var reader = new FileReader();
+	reader.onload = function(event){
+		var img = new Image();
+		img.onload = function(){
+
+			ctx.drawImage(img,0,0,cw,ch);
+			var imgdata = CannyJS.canny(canvas);
+			imgdata.drawOn(canvas);
+			const newdata = ctx.getImageData(0, 0, cw, ch);
+			console.log(imgdata)
+			ctx.clearRect(0,0,canvas.width,canvas.height);
+
+			// Convert EdgeDetected ImageData into x and y coordinates
+			imgToArray(newdata);
+			// var svgstr = ImageTracer.imagedataToSVG( newdata, { ltres:0.1, qtres:1} );
+			// console.log(svgstr);
+			// var sol = solve(cannyarray,0.79);
+			// cannyarray = sol.map(i => cannyarray[i]);
+			// createPath(cannyarray);
+			// Test if cannyarray has valid x,y coordinates
+			var prevx = cannyarray[0].x;
+			var prevy = cannyarray[0].y;
+			for (var i = 0; i < cannyarray.length; i++) {
+				var x = cannyarray[i].x;
+				var y = cannyarray[i].y;
+				// ctx.beginPath();
+				// ctx.arc(,, 1, 0, 2 * Math.PI);
+				// ctx.stroke();
+				ctx.beginPath();
+				ctx.moveTo(prevx,prevy);
+				ctx.lineTo(x, y);
+				ctx.stroke();
+				prevx = x;
+				prevy = y;
+	
+				// console.log('dar');
+
+			}
+			// console.log(imgdata);
+		}
+		img.src = event.target.result;
+		console.log(e.target.files[0]);
+		
+	}
+	reader.readAsDataURL(e.target.files[0]);     
 }

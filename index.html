@@ -29,8 +29,18 @@
 		<input type="range" min="1" max="100" value="50" class="slider" id="myRange">
 	</div>
 	<div id="performance"></div>
-	<input type="file" id="image-input" accept="image/jpeg, image/png, image/jpg">
-	<img id="display-image"/>
+
+	<div class="settings-box" id="settings">
+		<div class="settings" id="img-settings">	
+			<input type="file" id="image-input" accept="image/jpeg, image/png, image/jpg">
+		</div>
+
+		<div class="settings" id="api-settings">
+			Placeholder API dropdown
+		</div>
+	</div>
+
+
 	<button type="button" onclick="activateUserDrawing()" class="block">Draw</button>
 	<button type="button" class="block">API</button>
 	<button type="button" onclick="activateFileDrawing()" class="block">Image</button>
