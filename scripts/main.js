@@ -110,7 +110,15 @@ function activateUserDrawing(){
 
 
 function startAnim(inputpath) {
-	fourier_path = dft(convertToComplex(inputpath));
+	const input_set = inputpath.reduce((acc, current) => {
+		const x = acc.find(item => item.x === current.x && item.y === current.y);
+		if (!x) {
+		  return acc.concat([current]);
+		} else {
+		  return acc;
+		}
+	  }, []);
+	fourier_path = dft(convertToComplex(input_set));
 	slider.max = fourier_path.length-1;
 	slider.value = slider.max-1;
 	slider.min = 1;
@@ -167,12 +175,12 @@ function retrieveAPIImage(category){
 
 function sortPath(points) {
 	var out = [];
-	const r = 5;
+	const r = 10;
 	for (let i = 0; i < points.length; i++) {
 		var point = points[i];
 		for (var scout = 1; scout < r; scout++) {
 			// Ensure point is not already in outarray
-			if (out.indexOf(point) == -1){
+			if (containsObject(point, out) == false){
 				var positions = {
 					up:{x:point.x, y:point.y - scout},
 					top_right:{x:point.x + scout, y:point.y - scout},
@@ -186,11 +194,12 @@ function sortPath(points) {
 
 				// OBJECTS PASSED BY REF so doesn't check with given points
 				for (const position in positions) {
-					// console.log(position);
+					// console.log(positions[position].x);
 					// console.log(containsObject(position, points));
-					var nextindex = containsObject(position, points);
-					console.log(nextindex);
+					var nextindex = containsObject(positions[position], points);
+					// console.log(nextindex);
 					if (nextindex > 0){
+						// console.log(points[nextindex]);
 						out.push(points[nextindex]);
 						points.splice(i+1,0,points[nextindex]);
 					}
