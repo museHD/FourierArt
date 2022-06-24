@@ -83,28 +83,28 @@ function activateUserDrawing(){
 	}
 
 
-	function mouseMoveHandler (e){
+	window.mouseMoveHandler = function(e){
 		prevx = x;
 		prevy = y;
 		x = e.pageX - this.offsetLeft;
 		y = e.pageY - this.offsetTop;
 	}
 
-	function mouseDownHandler (e){
+	window.mouseDownHandler = function(e){
 		cancelAnimationFrame(requestID);
 		ctx.clearRect(0,0,canvas.width,canvas.height);
 		canvas.addEventListener("mousemove", trace);
 		user_drawing = [];
 	}
 
-	function mouseUpHander (e){
+	window.mouseUpHandler = function(e){
 		canvas.removeEventListener("mousemove", trace);
 		startAnim(user_drawing);
 	}
 
 	canvas.addEventListener("mousemove", mouseMoveHandler);
 	canvas.addEventListener("mousedown", mouseDownHandler);
-	canvas.addEventListener("mouseup", mouseUpHander);
+	canvas.addEventListener("mouseup", mouseUpHandler);
 
 }
 

@@ -68,13 +68,17 @@ function arrToXY (data,out){
 	}
 }
 
+
 function hideAllSettings() {
     const settings = document.getElementsByClassName("settings");
     for (let index = 0; index < settings.length; index++) {
         settings[index].style.display = "none"
     }
 
-    
+	canvas.removeEventListener("mousemove", window.mouseMoveHandler);
+	canvas.removeEventListener("mousedown", window.mouseDownHandler);
+	canvas.removeEventListener("mouseup", window.mouseUpHandler);
+
 }
 
 
