@@ -119,6 +119,12 @@ function startAnim(inputpath) {
 	displayAnimation(fourier_path);
 }
 
+function stopAnim() {
+	cancelAnimationFrame(requestID);
+	Controller.clearData();
+	ctx.clearRect(0,0,canvas.width,canvas.height);
+	ctx2.clearRect(0,0,canvas.width,canvas.height);
+}
 
 
 ////////////////////////////////
@@ -126,6 +132,7 @@ function startAnim(inputpath) {
 ////////////////////////////////
 
 function activateFileDrawing(){
+	stopAnim();
 	drawmethod = 1; //Set draw method to points
 	hideAllSettings();
 	ctx.clearRect(0,0,800,800);
@@ -463,6 +470,10 @@ class EpicycleController{
 		}
 		ctx2.stroke();
 		// if (currentepicycle.cachepos == 0){debugger;}        
+	}
+
+	clearData(){
+		this.epicycles = [];
 	}
 
 	// intital updatepicycles with real time calcs and cache saving (maybe)

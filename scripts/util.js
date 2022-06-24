@@ -90,6 +90,7 @@ function receiveImage(e) {
 
 			ctx.drawImage(img,0,0,cw,ch);
 			var imgdata = CannyJS.canny(canvas);
+			ctx.clearRect(0,0,canvas.width,canvas.height);
 			imgdata.drawOn(canvas);
 			const newdata = ctx.getImageData(0, 0, cw, ch);
 			console.log(imgdata)
@@ -101,8 +102,9 @@ function receiveImage(e) {
 			// console.log(svgstr);
 			// var sol = solve(cannyarray,0.79);
 			// cannyarray = sol.map(i => cannyarray[i]);
-			// createPath(cannyarray);
+			createPath(cannyarray);
 			// Test if cannyarray has valid x,y coordinates
+			startAnim(cannyarray);
 			var prevx = cannyarray[0].x;
 			var prevy = cannyarray[0].y;
 			for (var i = 0; i < cannyarray.length; i++) {
