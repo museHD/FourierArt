@@ -49,10 +49,12 @@ function draw(ar, dot=false){
 // Check if array contains provided object 
 function containsObject(obj, list) {
     var i;
-    obx = obj.x;
-    oby = obj.y;
+    var obx = obj.x;
+    var oby = obj.y;
     for (i = 0; i < list.length; i++) {
-        if ((list[i][0] == obj.x) && (list[i][1] == obj.y)) {
+		// console.log(list[i].x, obj);
+        if ((list[i].x == obx) && (list[i].y == oby)) {
+			// console.log(list[i][0]);
             return i;
         }
     }
@@ -102,7 +104,7 @@ function receiveImage(e) {
 			// console.log(svgstr);
 			// var sol = solve(cannyarray,0.79);
 			// cannyarray = sol.map(i => cannyarray[i]);
-			createPath(cannyarray);
+			// createPath(cannyarray);
 			// Test if cannyarray has valid x,y coordinates
 			startAnim(cannyarray);
 			var prevx = cannyarray[0].x;
