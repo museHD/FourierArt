@@ -59,56 +59,16 @@ var fourier_path = [];
 var inputpath = [];
 
 function activateUserDrawing(){
+	var x,y,prevx,prevy = 0;
 	fourier_path = [];
-	inputpath = [];
+	user_drawing = [];
 	drawmethod = 0; //Draw connecting lines b/w points
 	hideAllSettings();
 
 	ctx.clearRect(0,0,800,800);
 	ctx2.clearRect(0,0,800,800);
-}
 
-
-function getCanvas(){
-	// Get convas drawing points
-	// Return Path
-	
-	inputpath = [];
-
-	var x,y,prevx,prevy = 0;
-
-
-	canvas.addEventListener("mousemove", function(e){
-		prevx = x;
-		prevy = y;
-		x = e.pageX - this.offsetLeft;
-		y = e.pageY - this.offsetTop;
-	})
-
-	canvas.addEventListener("mousedown", function(e){
-		cancelAnimationFrame(requestID);
-		ctx.clearRect(0,0,canvas.width,canvas.height);
-		canvas.addEventListener("mousemove", trace);
-		inputpath = [];
-	});
-
-	canvas.addEventListener("mouseup", function(){
-		// inputpath = cannyarray;
-		canvas.removeEventListener("mousemove", trace);
-		fourier_path = dft(convertToComplex(inputpath));
-		slider.max = fourier_path.length-1;
-		slider.value = slider.max-1;
-		slider.min = 1;
-		fourier_path.sort((a,b) => {return b.amp - a.amp});
-		Controller.generateEpicycles(cw/2, ch/2, fourier_path, fourier_path.length);
-		displayAnimation(fourier_path);
-		
-	});
-
-	// canvas.addEventListener("mouseout", function(){
-	//  canvas.removeEventListener("mousemove", trace);
-	// });
-
+	// Trace handler for user drawing
 	function trace(){
 		ctx.lineWidth = 3;
 		ctx.lineJoin = 'round';
@@ -119,11 +79,46 @@ function getCanvas(){
 		ctx.lineTo(x,y);
 		ctx.closePath();
 		ctx.stroke();
-		inputpath.push({x,y})
+		user_drawing.push({x,y})
 	}
 
-	return inputpath;
+
+	function mouseMoveHandler (e){
+		prevx = x;
+		prevy = y;
+		x = e.pageX - this.offsetLeft;
+		y = e.pageY - this.offsetTop;
+	}
+
+	function mouseDownHandler (e){
+		cancelAnimationFrame(requestID);
+		ctx.clearRect(0,0,canvas.width,canvas.height);
+		canvas.addEventListener("mousemove", trace);
+		user_drawing = [];
+	}
+
+	function mouseUpHander (e){
+		canvas.removeEventListener("mousemove", trace);
+		startAnim(user_drawing);
+	}
+
+	canvas.addEventListener("mousemove", mouseMoveHandler);
+	canvas.addEventListener("mousedown", mouseDownHandler);
+	canvas.addEventListener("mouseup", mouseUpHander);
+
 }
+
+
+function startAnim(inputpath) {
+	fourier_path = dft(convertToComplex(inputpath));
+	slider.max = fourier_path.length-1;
+	slider.value = slider.max-1;
+	slider.min = 1;
+	fourier_path.sort((a,b) => {return b.amp - a.amp});
+	Controller.generateEpicycles(cw/2, ch/2, fourier_path, fourier_path.length);
+	displayAnimation(fourier_path);
+}
+
 
 
 ////////////////////////////////
@@ -260,21 +255,6 @@ function createPath(points){
 // Processing  //
 /////////////////
 
-function vectorise(drawingPath){
-	tracepath()
-	createSVG()
-	// Return SVG
-}
-
-function tracepath(drawingPath) {
-	// convert image to path
-	// Return path
-}
-
-function createSVG(path) {
-	// create SVG from path
-}
-
 function convertToComplex(path){
 	var c_path = [];
 	for (let i = 0; i < path.length; i++) {
@@ -403,7 +383,7 @@ class EpicycleController{
 		// create circles and epicycle data
 		// Return epicycle data
 		this.epicycles = [];
-		dt = Math.PI*2 / inputpath.length;
+		dt = Math.PI*2 / fourier_vals.length;
 		for (var i = 1; i < f_size; i++) {
 			let prevx = x;
 			let prevy = y;
@@ -576,10 +556,10 @@ function displayAnimation() {
 	setTimeout(function() {
 		t1 = performance.now();
 		perf.innerHTML = `${(t1-t0).toFixed(3)}`;
-	requestAnimationFrame(displayAnimation);
+	// requestAnimationFrame(displayAnimation);
 
 	}, 1000/framesPerSecond);
-	// requestID = requestAnimationFrame(displayAnimation);
+	requestID = requestAnimationFrame(displayAnimation);
 
 }
 
@@ -589,7 +569,6 @@ function displayAnimation() {
 
 function main(){
 	setup();
-	getCanvas();
 }
 
 main();

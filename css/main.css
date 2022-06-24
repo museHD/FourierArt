@@ -12,3 +12,11 @@
 	width: 400px;
 	position: relative;
 }
+
+#img-settings{
+	display: none;
+}
+
+#api-settings{
+	display: none;
+}
