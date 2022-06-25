@@ -13,14 +13,14 @@ fetch("./test.json")
 	}
 });
 
-const pp = fetch("https://storage.googleapis.com/quickdraw_dataset/full/simplified/penguin.ndjson", { mode: 'no-cors' })
-.then(response => {
-	return response.blob();
-})
-.then(function(data){
-	console.log(data);
+// const pp = fetch("https://storage.googleapis.com/quickdraw_dataset/full/simplified/penguin.ndjson", { mode: 'no-cors' })
+// .then(response => {
+// 	return response.blob();
+// })
+// .then(function(data){
+// 	console.log(data);
 
-});
+// });
 
 // Setting up Canvases
 const canvas = document.getElementById("layer1");
@@ -447,6 +447,35 @@ class Epicycle{
 class EpicycleController{
 	constructor(){
 		this.epicycles = [];
+	}
+
+	generateGpuEpicycles(x, y, f_vals, f_size){
+		const settings = {
+			output: {x:f_size}
+		};
+		const gpu = new GPU();
+		var inarray = [];
+			
+		for (let i = 1; i < f_size; i++) {
+			let freq = f_vals[i].freq;
+			let radius = f_vals[i].amp;
+			let phase = f_vals[i].phase;
+			inarray.push([freq,radius,phase]);
+		}
+		// console.log(inarray);
+		const gpuGenerate = gpu.createKernel(function(fourier_vals){
+			// var out = [];
+			let freq = fourier_vals[this.thread.x];
+			// let radius = fourier_vals[this.thread.x][1];
+			// let phase = fourier_vals[this.thread.x][2];
+			
+			return freq;
+		}).setOutput([f_size]);
+		console.log(gpuGenerate(inarray));
+		// const kernel = gpu.createKernel(function() {
+		// 	return [0.08, 2];
+		//    }).setOutput([100]);
+		//   console.log(kernel());
 	}
 
 	generateEpicycles(x, y, fourier_vals, f_size) {

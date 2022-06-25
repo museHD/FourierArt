@@ -143,6 +143,10 @@ function receiveImage(e) {
 
 // module.exports = {arrToXY, containsObject};
 
+// Testing GPU function
+
+// const gpu = new GPU();
+
 // Obsolete path solving function 
 
 // /**
