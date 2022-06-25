@@ -12,6 +12,7 @@
 	<script src="scripts/util.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/binary-parser@2.0.2/dist/binary_parser.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/biginteger@1.0.3/biginteger.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@google-cloud/storage@6.2.0/build/src/index.min.js"></script>
 
 	<script defer src="./scripts/main.js"></script>
 	
@@ -22,44 +23,34 @@
 <body>
 
 	<div style="position: relative;">
-		<canvas id="layer1" width="100" height="100" 
-	style="position: relative; left: 0; top: 200; z-index: 1;"></canvas>
-		<canvas id="layer2" width="100" height="100" 
-	style="position: absolute; left: 0; top: 200; z-index: 0;"></canvas>
+			<canvas class="column canvas-container" id="layer1" width="100" height="100" 
+		style="position: relative; left: 0; top: 200; z-index: 1;"></canvas>
+			<canvas class="column canvas-container" id="layer2" width="100" height="100" 
+		style="position: absolute; left: 0; top: 200; z-index: 0;"></canvas>
 	</div>
 
-	<div class="slidercontainer">
-		<input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+	<div class="var-container column">
+		<div class="slidercontainer">
+			<input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+		</div>
+
+
+		<div class="settings-box" id="settings">
+			<div class="settings" id="img-settings">	
+				<input type="file" id="image-input" accept="image/jpeg, image/png, image/jpg">
+			</div>
+
+			<div class="settings" id="api-settings">
+				Placeholder API dropdown
+			</div>
+		</div>
+
+
+		<button type="button" onclick="activateUserDrawing()" class="block">Draw</button>
+		<button type="button" onclick="activateAPIDrawing()" class="block">API</button>
+		<button type="button" onclick="activateFileDrawing()" class="block">Image</button>
 	</div>
 	<div id="performance"></div>
-
-	<div class="settings-box" id="settings">
-		<div class="settings" id="img-settings">	
-			<input type="file" id="image-input" accept="image/jpeg, image/png, image/jpg">
-		</div>
-
-		<div class="settings" id="api-settings">
-			Placeholder API dropdown
-		</div>
-	</div>
-
-
-	<button type="button" onclick="activateUserDrawing()" class="block">Draw</button>
-	<button type="button" onclick="activateAPIDrawing()" class="block">API</button>
-	<button type="button" onclick="activateFileDrawing()" class="block">Image</button>
-
-	<!-- <button type="button" class="block">Block Button</button> -->
-
-	<!-- <p><input type="file"  accept="image/*" name="image" id="file"  onchange="loadFile(event)" style="display: none;"></p>
-<p><label for="file" style="cursor: pointer;">Upload Image</label></p>
-<p><img id="output" width="200" /></p>
-
-<script>
-var loadFile = function(event) {
-	var image = document.getElementById('output');
-	image.src = URL.createObjectURL(event.target.files[0]);
-};
-</script> -->
 
 </body>
 
