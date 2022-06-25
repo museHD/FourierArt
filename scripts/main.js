@@ -114,6 +114,7 @@ function activateUserDrawing(){
 	canvas.addEventListener("mousemove", mouseMoveHandler);
 	canvas.addEventListener("mousedown", mouseDownHandler);
 	canvas.addEventListener("mouseup", mouseUpHandler);
+	document.getElementById("draw-btn").classList.add("btn-pressed");
 
 }
 
@@ -156,6 +157,7 @@ function activateFileDrawing(){
 	ctx2.clearRect(0,0,800,800);
 	image_input.value = '';
 	document.getElementById("img-settings").style.display = "block";
+	document.getElementById("file-btn").classList.add("btn-pressed");
 
 
 
@@ -179,9 +181,26 @@ function activateAPIDrawing() {
 	ctx.clearRect(0,0,800,800);
 	ctx2.clearRect(0,0,800,800);
 	document.getElementById("api-settings").style.display = "block";
+	document.getElementById("api-btn").classList.add("btn-pressed");
 	
 	// var drawings = fetch("https://storage.googleapis.com/quickdraw_dataset/full/simplified/penguin.ndjson");
-
+	// const storage = Storage();
+	// async function downloadByteRange() {
+	// 	const options = {
+	// 	  destination: destFileName,
+	// 	  start: 0,
+	// 	  end: 10000,
+	// 	};
+	  
+	// 	// Downloads the file from the starting byte to the ending byte specified in options
+	// 	await storage.bucket("quickdraw_dataset/full/simplified/").file("line.ndjson").download(options);
+	  
+	// 	console.log(
+	// 	  `gs://{"bucketName"} downloaded to ${destFileName} from byte ${startByte} to byte ${endByte}.`
+	// 	);
+	//   }
+	  
+	//   downloadByteRange();
 // 	fetch("https://storage.googleapis.com/quickdraw_dataset/full/simplified/penguin.ndjson", { mode: 'no-cors' })
 // .then((res) => { return res.blob(); })
 // .then((data) => {
@@ -604,12 +623,12 @@ function displayAnimation() {
 	//Frame Time Info
 	
 	var framesPerSecond = 60;
-	setTimeout(function() {
+	// setTimeout(function() {
 		t1 = performance.now();
 		perf.innerHTML = `${(t1-t0).toFixed(3)}`;
 	// requestAnimationFrame(displayAnimation);
 
-	}, 1000/framesPerSecond);
+	// }, 1000/framesPerSecond);
 	requestID = requestAnimationFrame(displayAnimation);
 
 }
