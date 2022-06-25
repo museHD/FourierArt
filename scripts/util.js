@@ -63,11 +63,14 @@ function containsObject(obj, list) {
 }
 
 // Convert array to x and y coordinates and output to provided array
-function arrToXY (data,out){
+function arrToXY (data){
+	var out = [];
+	if(data[0][0] == undefined || data[0][1] == undefined){throw("Invalid Array for Conversion");}
 	for (let i = 0; i < data.length; i++) {
 		let pos = {x:data[i][0],y:data[i][1]};
 		out.push(pos);
 	}
+	return out;
 }
 
 
@@ -134,6 +137,7 @@ function receiveImage(e) {
 	reader.readAsDataURL(e.target.files[0]);     
 }
 
+module.exports = {arrToXY, containsObject};
 
 // Obsolete path solving function 
 
