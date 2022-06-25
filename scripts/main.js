@@ -145,7 +145,7 @@ function activateFileDrawing(){
 	hideAllSettings();
 	ctx.clearRect(0,0,800,800);
 	ctx2.clearRect(0,0,800,800);
-
+	image_input.value = '';
 	cannyarray = [];
 	document.getElementById("img-settings").style.display = "block";
 
@@ -161,6 +161,15 @@ function getImage(){
 ///////////////////////////////
 // API Drawing Functionality //
 ///////////////////////////////
+
+function activateAPIDrawing() {
+	stopAnim();
+	drawmethod = 0; //Set draw method to lines
+	hideAllSettings();
+	ctx.clearRect(0,0,800,800);
+	ctx2.clearRect(0,0,800,800);
+	document.getElementById("api-settings").style.display = "block";
+}
 
 function getRandomDrawing(){
 	// Get user selected category
