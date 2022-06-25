@@ -57,3 +57,136 @@
     /* left: auto; */
     right: auto;
 }
+
+
+input[type="file"] {
+    display: none;
+}
+
+/* From uiverse.io by @mrhyddenn */
+.icon-btn {
+	width: 50px;
+	height: 50px;
+	border: 1px solid #cdcdcd;
+	background: white;
+	border-radius: 25px;
+	overflow: hidden;
+	position: relative;
+	transition: width 0.2s ease-in-out;
+	/* font-weight: 500;
+	font-family: inherit; */
+  }
+  
+  .add-btn:hover {
+	width: 120px;
+  }
+  
+  .add-btn::before,
+  .add-btn::after {
+	transition: width 0.2s ease-in-out, border-radius 0.2s ease-in-out;
+	content: "";
+	position: absolute;
+	height: 4px;
+	width: 10px;
+	top: calc(50% - 2px);
+	background: seagreen;
+  }
+  
+  .add-btn::after {
+	right: 14px;
+	overflow: hidden;
+	border-top-right-radius: 2px;
+	border-bottom-right-radius: 2px;
+  }
+  
+  .add-btn::before {
+	left: 14px;
+	border-top-left-radius: 2px;
+	border-bottom-left-radius: 2px;
+  }
+  
+  .icon-btn:focus {
+	outline: none;
+  }
+  
+  .btn-txt {
+	opacity: 0;
+	transition: opacity 0.2s;
+  }
+  
+  .add-btn:hover::before,
+  .add-btn:hover::after {
+	width: 4px;
+	border-radius: 2px;
+  }
+  
+  .add-btn:hover .btn-txt {
+	opacity: 1;
+  }
+  
+  .add-icon::after,
+  .add-icon::before {
+	transition: all 0.2s ease-in-out;
+	content: "";
+	position: absolute;
+	height: 20px;
+	width: 2px;
+	top: calc(50% - 10px);
+	background: seagreen;
+	overflow: hidden;
+  }
+  
+  .add-icon::before {
+	left: 22px;
+	border-top-left-radius: 2px;
+	border-bottom-left-radius: 2px;
+  }
+  
+  .add-icon::after {
+	right: 22px;
+	border-top-right-radius: 2px;
+	border-bottom-right-radius: 2px;
+  }
+  
+  .add-btn:hover .add-icon::before {
+	left: 15px;
+	height: 4px;
+	top: calc(50% - 2px);
+  }
+  
+  .add-btn:hover .add-icon::after {
+	right: 15px;
+	height: 4px;
+	top: calc(50% - 2px);
+  }
+
+  /* From uiverse.io by @absoluteSTrange */
+button {
+	padding: 17px 40px;
+	border-radius: 10px;
+	border: 0;
+	background-color: rgb(255, 56, 86);
+	letter-spacing: 1.5px;
+	font-size: 15px;
+	transition: all .3s ease;
+	box-shadow: rgb(201, 46, 70) 0px 10px 0px 0px;
+	color: hsl(0, 0%, 100%);
+   }
+   
+   button:hover {
+	/* box-shadow: rgb(201, 46, 70) 0px 7px 0px 0px; */
+	background-color: rgb(230, 59, 84);
+
+   }
+   
+   .btn-pressed {
+	background-color: rgb(255, 56, 86);
+	/*50, 168, 80*/
+	box-shadow: rgb(201, 46, 70) 0px 3px 0px 0px;
+	transform: translateY(5px);
+	transition: 200ms;
+   }
+
+.buttons-div{
+	padding: 15px 0px;
+}

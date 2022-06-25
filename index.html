@@ -30,25 +30,36 @@
 	</div>
 
 	<div class="var-container column">
-		<div class="slidercontainer">
-			<input type="range" min="1" max="100" value="50" class="slider" id="myRange">
-		</div>
-
+		<h1>Controls</h1>
+		<hr>
+		
+			<div class="buttons-div">
+				<button id="draw-btn" type="button" onclick="activateUserDrawing()" class="block target">Draw</button>
+				<button id="api-btn" type="button" onclick="activateAPIDrawing()" class="block target">API</button>
+				<button id="file-btn" type="button" onclick="activateFileDrawing()" class="block target">Image</button>
+			</div>
+		<hr>
 
 		<div class="settings-box" id="settings">
-			<div class="settings" id="img-settings">	
-				<input type="file" id="image-input" accept="image/jpeg, image/png, image/jpg">
+			<div class="settings" id="img-settings">
+				<button class="icon-btn add-btn">
+					<div class="add-icon"></div>
+					<label for="image-input" class="btn-txt">Upload</label>
+				</button>	
+				<input class="btn-txt"type="file" id="image-input" accept="image/jpeg, image/png, image/jpg">
 			</div>
 
 			<div class="settings" id="api-settings">
 				Placeholder API dropdown
 			</div>
 		</div>
+				
+		<div class="slidercontainer">
+			<input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+		</div>
 
 
-		<button type="button" onclick="activateUserDrawing()" class="block">Draw</button>
-		<button type="button" onclick="activateAPIDrawing()" class="block">API</button>
-		<button type="button" onclick="activateFileDrawing()" class="block">Image</button>
+
 	</div>
 	<div id="performance"></div>
 
