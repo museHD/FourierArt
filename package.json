@@ -1,0 +1,22 @@
+{
+  "name": "fourierart",
+  "version": "1.0.0",
+  "description": "SDD Major Work - Uses Discrete Fourier Transform to plot drawings",
+  "main": "main.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/museHD/FourierArt.git"
+  },
+  "author": "MuseHD",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/museHD/FourierArt/issues"
+  },
+  "homepage": "https://github.com/museHD/FourierArt#readme",
+  "devDependencies": {
+    "jest": "^28.1.1"
+  }
+}
