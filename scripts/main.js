@@ -120,6 +120,7 @@ function activateUserDrawing(){
 
 
 function startAnim(inputpath) {
+	console.log(inputpath.length);
 	const input_set = inputpath.reduce((acc, current) => {
 		const x = acc.find(item => item.x === current.x && item.y === current.y);
 		if (!x) {
@@ -128,6 +129,9 @@ function startAnim(inputpath) {
 		  return acc;
 		}
 	  }, []);
+
+	ctx.lineWidth = 0.5;
+	ctx2.lineWidth = 2;
 	fourier_path = dft(convertToComplex(input_set));
 	slider.max = fourier_path.length-1;
 	slider.value = slider.max-1;
@@ -486,8 +490,6 @@ class EpicycleController{
 				return false;
 			})
 		}
-		ctx.lineWidth = 0.5;
-		ctx2.lineWidth = 2;
 
 
 	return {x,y};
@@ -497,23 +499,22 @@ class EpicycleController{
 		var prevx = this.epicycles[0].x;
 		var prevy = this.epicycles[0].y;
 		var currentepicycle = this.epicycles[0];
+		
+		ctx.beginPath();
 		for (var ep = 0; ep < slider.value-1; ep++){
 			currentepicycle = this.epicycles[ep];
-			ctx.beginPath();
 			ctx.arc(currentepicycle.x, currentepicycle.y, currentepicycle.radius, 0, 2 * Math.PI);
-			ctx.stroke();
-
-			ctx.beginPath();
+			// ctx.stroke();
+			// Don't stroke for each iteration - better performance
+			// ctx.beginPath();
 			ctx.moveTo(prevx,prevy);
 			ctx.lineTo(currentepicycle.x, currentepicycle.y);
-			ctx.stroke();
-
-
 
 			prevx = currentepicycle.x;
 			prevy = currentepicycle.y;
-
 		}
+		ctx.stroke();
+		
 		for (let i = 0; i < this.epicycles.length-1; i++) {
 			this.epicycles[i].loadNextCache();
 		}
