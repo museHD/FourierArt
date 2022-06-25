@@ -137,7 +137,7 @@ function receiveImage(e) {
 	reader.readAsDataURL(e.target.files[0]);     
 }
 
-module.exports = {arrToXY, containsObject};
+// module.exports = {arrToXY, containsObject};
 
 // Obsolete path solving function 
 

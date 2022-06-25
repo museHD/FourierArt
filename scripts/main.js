@@ -13,6 +13,15 @@ fetch("./test.json")
 	}
 });
 
+const pp = fetch("https://storage.googleapis.com/quickdraw_dataset/full/simplified/penguin.ndjson", { mode: 'no-cors' })
+.then(response => {
+	return response.blob();
+})
+.then(function(data){
+	console.log(data);
+
+});
+
 // Setting up Canvases
 const canvas = document.getElementById("layer1");
 const ctx = canvas.getContext("2d");
@@ -146,8 +155,9 @@ function activateFileDrawing(){
 	ctx.clearRect(0,0,800,800);
 	ctx2.clearRect(0,0,800,800);
 	image_input.value = '';
-	cannyarray = [];
 	document.getElementById("img-settings").style.display = "block";
+
+
 
 
 }
@@ -169,6 +179,18 @@ function activateAPIDrawing() {
 	ctx.clearRect(0,0,800,800);
 	ctx2.clearRect(0,0,800,800);
 	document.getElementById("api-settings").style.display = "block";
+	
+	// var drawings = fetch("https://storage.googleapis.com/quickdraw_dataset/full/simplified/penguin.ndjson");
+
+// 	fetch("https://storage.googleapis.com/quickdraw_dataset/full/simplified/penguin.ndjson", { mode: 'no-cors' })
+// .then((res) => { return res.blob(); })
+// .then((data) => {
+// 	console.log(data);
+//   var a = document.createElement("a");
+//   a.href = window.URL.createObjectURL(data);
+// //   a.download = "FILENAME";
+// //   a.click();
+// });
 }
 
 function getRandomDrawing(){
