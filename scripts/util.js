@@ -25,7 +25,8 @@ function imgToArray(imdata){
 
 
 // Input array of coordinates and draw on canvas
-function draw(ar, dot=false){
+function draw(ar, dot=false,canv){
+	let ctx = canv.getContext("2d");
 	let prevx = ar[0].x;
 	let prevy = ar[0].y;
 	for (let i = 0; i < ar.length; i++) {
@@ -33,11 +34,11 @@ function draw(ar, dot=false){
 		var y = ar[i].y;
 		ctx.beginPath();
         if (dot){
-            ctx.arc(x, y, 1, 0, 2 * Math.PI);
+            ctx.arc(x/4, y/4, 1, 0, 2 * Math.PI);
         }
         else{
-            ctx.moveTo(prevx,prevy);
-            ctx.lineTo(x, y);
+            ctx.moveTo(prevx/4,prevy/4);
+            ctx.lineTo(x/4, y/4);
         }
 		ctx.stroke();
 		prevx = x;
@@ -173,6 +174,22 @@ function receiveImage(e) {
 	}
 	reader.readAsDataURL(e.target.files[0]);     
 }
+// https://gist.github.com/mauriciomassaia
+function resizeImageData (imageData, width, height) {
+	const resizeWidth = width >> 0
+	const resizeHeight = height >> 0
+	const ibm = window.createImageBitmap(imageData, 0, 0, imageData.width, imageData.height, {
+	  resizeWidth, resizeHeight
+	})
+	const canvas = document.createElement('canvas')
+	canvas.width = resizeWidth
+	canvas.height = resizeHeight
+	const ctx = canvas.getContext('2d')
+	ctx.scale(resizeWidth / imageData.width, resizeHeight / imageData.height)
+	ctx.drawImage(ibm, 0, 0)
+	return ctx.getImageData(0, 0, resizeWidth, resizeHeight)
+  }
+
 
 // module.exports = {arrToXY, containsObject};
 

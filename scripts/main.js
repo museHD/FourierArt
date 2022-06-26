@@ -38,6 +38,9 @@ canvas2.width = cw;
 canvas2.height = ch;
 canvas2.classList.add("canvas-container");
 
+const target_canv = document.getElementById("target-canvas");
+const ctx3 = target_canv.getContext("2d");
+
 var drawmethod = 0;
 
 var requestID;
@@ -121,10 +124,13 @@ function activateUserDrawing(){
 
 
 function startAnim(inputpath) {
+	ctx3.clearRect(0,0,300,300);
 
-	ctx.clearRect(0,0,canvas.width,canvas.height);
-	ctx2.clearRect(0,0,canvas.width,canvas.height);
-	
+	// debugger;
+	// let imdata = ctx.getImageData(0, 0, cw, ch);
+	// imdata = resizeImageData(imdata,target_canv.width, target_canv.height);
+	// ctx3.putImageData(imdata,0,0);
+	draw(inputpath,true,target_canv);
 
 	console.log(inputpath.length);
 	const input_set = inputpath.reduce((acc, current) => {
@@ -138,6 +144,9 @@ function startAnim(inputpath) {
 
 	ctx.lineWidth = 0.5;
 	ctx2.lineWidth = 2;
+	ctx.clearRect(0,0,canvas.width,canvas.height);
+	ctx2.clearRect(0,0,canvas.width,canvas.height);
+
 	fourier_path = dft(convertToComplex(input_set));
 	slider.max = fourier_path.length-1;
 	slider.value = slider.max-1;
