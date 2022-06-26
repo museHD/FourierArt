@@ -26,6 +26,9 @@ function imgToArray(imdata){
 
 // Input array of coordinates and draw on canvas
 function draw(ar, dot=false,canv){
+	if (ar.length==0) {
+		return;
+	}
 	let ctx = canv.getContext("2d");
 	let prevx = ar[0].x;
 	let prevy = ar[0].y;
@@ -95,6 +98,7 @@ function hideAllSettings() {
 	canvas.removeEventListener("mousemove", window.mouseMoveHandler);
 	canvas.removeEventListener("mousedown", window.mouseDownHandler);
 	canvas.removeEventListener("mouseup", window.mouseUpHandler);
+	ctx3.clearRect(0,0,300,300);
 
 }
 

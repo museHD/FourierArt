@@ -109,7 +109,10 @@ function activateUserDrawing(){
 
 	window.mouseUpHandler = function(e){
 		canvas.removeEventListener("mousemove", trace);
-		startAnim(user_drawing);
+		if (user_drawing.length<3) {
+			activateUserDrawing();
+		}else{
+		startAnim(user_drawing);}
 	}
 
 	canvas.addEventListener("mousemove", mouseMoveHandler);
@@ -162,6 +165,7 @@ function stopAnim() {
 	Controller.clearData();
 	ctx.clearRect(0,0,canvas.width,canvas.height);
 	ctx2.clearRect(0,0,canvas.width,canvas.height);
+	
 }
 
 
