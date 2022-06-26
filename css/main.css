@@ -5,7 +5,7 @@
 	border: solid gray 2px;
 	border-radius: 15px;
 	box-shadow: gray;
-	float:left;
+
 	/*width: 45%;*/
 }
 
@@ -32,6 +32,10 @@
 	float:left;
 }
 
+.main-canvas{
+	float:left;
+}
+
 .var-container{
     float: right;
     /* left: auto; */
@@ -45,7 +49,16 @@
     width: 20%;
     padding: 30px;
 	height: 740px;
+	position: relative;
 
+}
+
+#target-canvas{
+    width: 300px;
+    position: absolute;
+    bottom: 0px;
+    margin-left: -150px;
+    margin-bottom: 60px;
 }
 
 .column {
