@@ -73,6 +73,12 @@ function arrToXY (data){
 	return out;
 }
 
+function displayLoadingMsg(on) {
+	var loading_el = document.getElementById("loading");
+	if (on == 1){loading_el.style.display = "block";}
+	else{loading_el.style.display = "none";}
+	
+}
 
 function hideAllSettings() {
     const settings = document.getElementsByClassName("settings");
@@ -97,43 +103,53 @@ function receiveImage(e) {
 		var img = new Image();
 		img.onload = function(){
 
+			const cannyworker = new Worker('./scripts/canny/dist/worker.js')
+			cannyworker.postMessage({
+				cmd: 'appData',
+				data: {
+					width: ch,
+					height: cw,
+					// ut: 0.9,
+					// lt: 0.9
+				} 
+			});
+			
 			ctx.drawImage(img,0,0,cw,ch);
-			var imgdata = CannyJS.canny(canvas);
-			ctx.clearRect(0,0,canvas.width,canvas.height);
-			imgdata.drawOn(canvas);
-			const newdata = ctx.getImageData(0, 0, cw, ch);
-			console.log(imgdata)
+
+			var pixels = ctx.getImageData(0, 0, cw, ch).data;
+
+			cannyworker.postMessage({
+				cmd: 'imgData',
+				data: pixels
+			  });
 			ctx.clearRect(0,0,canvas.width,canvas.height);
 
-			// Convert EdgeDetected ImageData into x and y coordinates
-			imgToArray(newdata);
-			// var svgstr = ImageTracer.imagedataToSVG( newdata, { ltres:0.1, qtres:1} );
-			// console.log(svgstr);
-			// var sol = solve(cannyarray,0.79);
-			// cannyarray = sol.map(i => cannyarray[i]);
-			// createPath(cannyarray);
-			// Test if cannyarray has valid x,y coordinates
-			startAnim(cannyarray);
-			var prevx = cannyarray[0].x;
-			var prevy = cannyarray[0].y;
-			for (var i = 0; i < cannyarray.length; i++) {
-				var x = cannyarray[i].x;
-				var y = cannyarray[i].y;
-				// ctx.beginPath();
-				// ctx.arc(,, 1, 0, 2 * Math.PI);
-				// ctx.stroke();
-				ctx.beginPath();
-				ctx.moveTo(prevx,prevy);
-				ctx.lineTo(x, y);
-				ctx.stroke();
-				prevx = x;
-				prevy = y;
-	
-				// console.log('dar');
+			// canvas_obj = JSON.parse(JSON.stringify(canvas));
+			// var imgdata = CannyJS.canny(canvas);
+			cannyworker.onmessage = function(e){
+				console.log(e.data.data);
+				var messagearray = new Uint8ClampedArray(e.data.data)
+				var imgdata = new ImageData(messagearray, cw, ch);
+				ctx.putImageData(imgdata,0,0);
+				
+				// console.log(imgdata);
+				// console.log("EEEE",e);
+				const newdata = ctx.getImageData(0, 0, cw, ch);
+				ctx.clearRect(0,0,canvas.width,canvas.height);
 
+				// Convert EdgeDetected ImageData into x and y coordinates
+				imgToArray(newdata);
+				// var svgstr = ImageTracer.imagedataToSVG( newdata, { ltres:0.1, qtres:1} );
+				// console.log(svgstr);
+				// var sol = solve(cannyarray,0.79);
+				// cannyarray = sol.map(i => cannyarray[i]);
+				// createPath(cannyarray);
+				// Test if cannyarray has valid x,y coordinates
+				startAnim(cannyarray);
+				
+				}
 			}
 			// console.log(imgdata);
-		}
 		img.src = event.target.result;
 		console.log(e.target.files[0]);
 		

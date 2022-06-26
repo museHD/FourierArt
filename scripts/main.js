@@ -120,6 +120,7 @@ function activateUserDrawing(){
 
 
 function startAnim(inputpath) {
+
 	console.log(inputpath.length);
 	const input_set = inputpath.reduce((acc, current) => {
 		const x = acc.find(item => item.x === current.x && item.y === current.y);

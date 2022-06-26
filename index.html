@@ -7,10 +7,11 @@
 	<link rel="icon" href="./imgs/favicon.ico" type="image/x-icon">
 	<title>Fourier Transform Art</title>
 	<script src="./scripts/gpu.min.js"></script>
-	<script src="scripts/canny-min.js"></script>
-	<script src="scripts/imagetracer.js"></script>
-	<script type="module" src="scripts/salesman.mjs"></script>
-	<script src="scripts/util.js"></script>
+	<script src="./scripts/canny-min.js"></script>
+	<!-- <script src="./scripts/cannyworker.js"></script> -->
+	<script src="./scripts/imagetracer.js"></script>
+	<script type="module" src="./scripts/salesman.mjs"></script>
+	<script src="./scripts/util.js"></script>
 
 
 	<!-- <script src="https://cdn.jsdelivr.net/npm/binary-parser@2.0.2/dist/binary_parser.js"></script>
@@ -44,6 +45,7 @@
 		<hr>
 
 		<div class="settings-box" id="settings">
+			<span id="loading">Loading... Please Wait</span>
 			<div class="settings" id="img-settings">
 				<button class="icon-btn add-btn">
 					<div class="add-icon"></div>
