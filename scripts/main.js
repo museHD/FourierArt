@@ -137,6 +137,7 @@ function startAnim(inputpath) {
 	slider.value = slider.max-1;
 	slider.min = 1;
 	fourier_path.sort((a,b) => {return b.amp - a.amp});
+	Controller.clearData();
 	Controller.generateEpicycles(cw/2, ch/2, fourier_path, fourier_path.length);
 	displayAnimation(fourier_path);
 }
@@ -325,7 +326,7 @@ function createPath(points){
 // Processing  //
 /////////////////
 
-function convertToComplex(path){
+function convertToComplex(path=[]){
 	var c_path = [];
 	for (let i = 0; i < path.length; i++) {
 		var x = new complex(path[i].x, path[i].y);
@@ -449,29 +450,84 @@ class EpicycleController{
 		this.epicycles = [];
 	}
 
+	// Testing GPU acceleration - Don't Use
 	generateGpuEpicycles(x, y, f_vals, f_size){
 		const settings = {
 			output: {x:f_size}
 		};
+
+		dt = Math.PI*2 / f_vals.length;
 		const gpu = new GPU();
 		var inarray = [];
-			
-		for (let i = 1; i < f_size; i++) {
+		var gpuarray = []
+		var cpuarray = [];
+
+		for (let i = 0; i < f_size; i++) {
 			let freq = f_vals[i].freq;
 			let radius = f_vals[i].amp;
 			let phase = f_vals[i].phase;
 			inarray.push([freq,radius,phase]);
 		}
-		// console.log(inarray);
-		const gpuGenerate = gpu.createKernel(function(fourier_vals){
-			// var out = [];
-			let freq = fourier_vals[this.thread.x];
-			// let radius = fourier_vals[this.thread.x][1];
-			// let phase = fourier_vals[this.thread.x][2];
+		console.log(inarray)
+	
+
+
+		var t0 = performance.now();
+		var cpux = x;
+		var cpuy = y;
+		for (var i = 1; i < f_size; i++) {
+			let prevx = cpux;
+			let prevy = cpuy;
+			let freq = f_vals[i].freq;
+			let radius = f_vals[i].amp;
+			let phase = f_vals[i].phase;
+			// console.log( radius * Math.cos(freq * time + phase));
+			cpux += radius * Math.cos(freq * time + phase);
+			cpuy += radius * Math.sin(freq * time + phase);
+			cpuarray.push(/*new Epicycle*/[cpux,cpuy,freq,radius,phase]);
+		}
+		console.log(cpuarray);
+		var t1 = performance.now();
+		console.log(`cpu takes ${(t1-t0).toFixed(3)}`);
+
+
+		
+		var t0 = performance.now();
+		// gpuarray = gpucord(inarray,time);
+		// var output = cpuarray.map(function(obj) {
+		// 	return Object.keys(obj).sort().map(function(key) { 
+		// 	  return obj[key];
+		// 	});
+		//   });
+		// console.log(output);
+		const gpuCache = gpu.createKernel(function(eps,dt,n){
+			var x = 400;
+			var y = 400;
+			const array2 = [[0.08,5], [2,1]];
+			// iterate through eps
+			// for (let ep = 0; ep < n; ep++) {
+			// 	const current = eps[ep];
+			// 	x += current[3] * Math.cos(current[2] * this.thread.x * dt + current[4]);
+			// 	y += current[3] * Math.sin(current[2] * this.thread.x * dt + current[4]);
+				
+			// }
+			return this.thread.x;
+		}).setOutput([2, f_size])
+		gpuarray = gpuCache(cpuarray, dt,cpuarray.length);
+		console.log(gpuarray);
+		var t1 = performance.now();
+		console.log(`gpu cos takes ${(t1-t0).toFixed(3)}`);
+
+		// const gpuGenerate = gpu.createKernel(function(fourier_vals){
+		// 	// var out = [];
+		// 	let freq = fourier_vals[this.thread.x];
+		// 	let ob = {x:freq};
+		// 	// let radius = fourier_vals[this.thread.x][1];
+		// 	// let phase = fourier_vals[this.thread.x][2];
 			
-			return freq;
-		}).setOutput([f_size]);
-		console.log(gpuGenerate(inarray));
+		// 	return ob;
+		// }).setOutput([f_size]);
+		// console.log(gpuGenerate(inarray));
 		// const kernel = gpu.createKernel(function() {
 		// 	return [0.08, 2];
 		//    }).setOutput([100]);

@@ -6,7 +6,7 @@ var xyPoints_50 = [{"x":451,"y":581},{"x":489,"y":438},{"x":125,"y":630},{"x":15
 var pointsArray_50 = [[773,383],[216,251],[519,568],[219,143],[629,435],[292,403],[167,232],[514,331],[581,199],[393,706],[672,592],[646,39],[303,327],[702,437],[420,468],[213,297],[115,198],[130,520],[141,155],[259,592],[791,316],[792,387],[747,460],[660,691],[38,270],[485,610],[81,44],[465,612],[208,520],[451,314],[537,270],[381,734],[557,454],[599,24],[405,317],[579,600],[254,563],[99,603],[179,694],[484,586],[240,523],[677,5],[672,542],[150,382],[585,576],[225,163],[259,396],[452,74],[218,271],[75,713]]
 
 describe('arrToXY: Converts 2D array into array of objects with x and y components', () =>{
-    test("given array of length 3, returns array of 3 points", () => {
+    test("given 2D array of length 3, returns array of 3 points", () => {
         let testin = [[0,0],[456,76],[154,680]];
         expect(util.arrToXY(testin)).toEqual([{x:0,y:0},{x:456,y:76},{x:154,y:680}]);
     });
@@ -35,8 +35,3 @@ describe('containsObject: Check if array contains a certain object', () =>{
     });
 
 });
-// test('Converts 2D array into array of objects with x and y components', () =>{
-
-// });
-
-// test('Check if array contains')
