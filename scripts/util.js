@@ -103,6 +103,7 @@ function receiveImage(e) {
 		var img = new Image();
 		img.onload = function(){
 
+			displayLoadingMsg(1);
 			const cannyworker = new Worker('./scripts/canny/dist/worker.js')
 			cannyworker.postMessage({
 				cmd: 'appData',
@@ -110,7 +111,7 @@ function receiveImage(e) {
 					width: ch,
 					height: cw,
 					// ut: 0.9,
-					// lt: 0.9
+					lt: 0.85
 				} 
 			});
 			
@@ -123,7 +124,8 @@ function receiveImage(e) {
 				data: pixels
 			  });
 			ctx.clearRect(0,0,canvas.width,canvas.height);
-
+			
+			// OLD EDGE DETECTION CODE
 			// canvas_obj = JSON.parse(JSON.stringify(canvas));
 			// var imgdata = CannyJS.canny(canvas);
 			cannyworker.onmessage = function(e){
@@ -131,20 +133,19 @@ function receiveImage(e) {
 				var messagearray = new Uint8ClampedArray(e.data.data)
 				var imgdata = new ImageData(messagearray, cw, ch);
 				ctx.putImageData(imgdata,0,0);
-				
-				// console.log(imgdata);
-				// console.log("EEEE",e);
 				const newdata = ctx.getImageData(0, 0, cw, ch);
 				ctx.clearRect(0,0,canvas.width,canvas.height);
 
 				// Convert EdgeDetected ImageData into x and y coordinates
 				imgToArray(newdata);
-				// var svgstr = ImageTracer.imagedataToSVG( newdata, { ltres:0.1, qtres:1} );
-				// console.log(svgstr);
-				// var sol = solve(cannyarray,0.79);
-				// cannyarray = sol.map(i => cannyarray[i]);
-				// createPath(cannyarray);
-				// Test if cannyarray has valid x,y coordinates
+
+					// OLD PATH CHECKING CODE
+					// var svgstr = ImageTracer.imagedataToSVG( newdata, { ltres:0.1, qtres:1} );
+					// console.log(svgstr);
+					// var sol = solve(cannyarray,0.79);
+					// cannyarray = sol.map(i => cannyarray[i]);
+					// createPath(cannyarray);
+					// Test if cannyarray has valid x,y coordinates
 				startAnim(cannyarray);
 				
 				}

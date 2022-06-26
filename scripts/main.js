@@ -140,6 +140,7 @@ function startAnim(inputpath) {
 	fourier_path.sort((a,b) => {return b.amp - a.amp});
 	Controller.clearData();
 	Controller.generateEpicycles(cw/2, ch/2, fourier_path, fourier_path.length);
+	displayLoadingMsg(0);
 	displayAnimation(fourier_path);
 }
 
@@ -586,20 +587,21 @@ class EpicycleController{
 		var prevy = this.epicycles[0].y;
 		var currentepicycle = this.epicycles[0];
 		
-		ctx.beginPath();
+		
 		for (var ep = 0; ep < slider.value-1; ep++){
 			currentepicycle = this.epicycles[ep];
+			ctx.beginPath();
 			ctx.arc(currentepicycle.x, currentepicycle.y, currentepicycle.radius, 0, 2 * Math.PI);
 			// ctx.stroke();
 			// Don't stroke for each iteration - better performance
 			// ctx.beginPath();
 			ctx.moveTo(prevx,prevy);
 			ctx.lineTo(currentepicycle.x, currentepicycle.y);
-
+			ctx.stroke();
 			prevx = currentepicycle.x;
 			prevy = currentepicycle.y;
 		}
-		ctx.stroke();
+		
 		
 		for (let i = 0; i < this.epicycles.length-1; i++) {
 			this.epicycles[i].loadNextCache();
