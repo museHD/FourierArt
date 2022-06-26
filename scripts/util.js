@@ -11,7 +11,7 @@ function imgToArray(imdata){
             var cords = divmod(x,4*cw);
             // Ensure x and y are within canvas bounds
             if ((1 < cords[0]) && (cords[0] < 790) && (1 < cords[1]) && (cords[1] < 790)){
-                cannyarray.push({x:cords[0],y:cords[1]});
+                out.push({x:cords[0],y:cords[1]});
             }
             else{
                 // console.log(cords)
@@ -19,6 +19,7 @@ function imgToArray(imdata){
         }
         // if (val != 0){cannyarray.push({x});}
     }
+	return out;
     // cannyarray = [...new Set(out)];
 }
 
@@ -96,6 +97,16 @@ function hideAllSettings() {
 
 }
 
+function reduce(arr){
+	out = [];
+	n = Math.ceil(arr.length/4000);
+	if (n<1){return arr;}
+	for (let i = 0; i < arr.length; i+=n) {
+		out.push(arr[i]);
+		
+	}
+	return out;
+}
 
 function receiveImage(e) {
 	var reader = new FileReader();
@@ -111,7 +122,7 @@ function receiveImage(e) {
 					width: ch,
 					height: cw,
 					// ut: 0.9,
-					lt: 0.85
+					// lt: 0.85
 				} 
 			});
 			
@@ -119,25 +130,28 @@ function receiveImage(e) {
 
 			var pixels = ctx.getImageData(0, 0, cw, ch).data;
 
-			cannyworker.postMessage({
-				cmd: 'imgData',
-				data: pixels
-			  });
-			ctx.clearRect(0,0,canvas.width,canvas.height);
+			// cannyworker.postMessage({
+			// 	cmd: 'imgData',
+			// 	data: pixels
+			//   });
+			// ctx.clearRect(0,0,canvas.width,canvas.height);
 			
 			// OLD EDGE DETECTION CODE
 			// canvas_obj = JSON.parse(JSON.stringify(canvas));
-			// var imgdata = CannyJS.canny(canvas);
-			cannyworker.onmessage = function(e){
-				console.log(e.data.data);
-				var messagearray = new Uint8ClampedArray(e.data.data)
-				var imgdata = new ImageData(messagearray, cw, ch);
-				ctx.putImageData(imgdata,0,0);
+			
+			var imgdata = CannyJS.canny(canvas);
+			// cannyworker.onmessage = function(e){
+				// console.log(e.data.data);
+				// var messagearray = new Uint8ClampedArray(e.data.data)
+				// var imgdata = new ImageData(messagearray, cw, ch);
+				// ctx.putImageData(imgdata,0,0);
+				ctx.clearRect(0,0,canvas.width,canvas.height);
+				imgdata.drawOn(canvas);
 				const newdata = ctx.getImageData(0, 0, cw, ch);
 				ctx.clearRect(0,0,canvas.width,canvas.height);
 
 				// Convert EdgeDetected ImageData into x and y coordinates
-				imgToArray(newdata);
+				cannyarray = imgToArray(newdata);
 
 					// OLD PATH CHECKING CODE
 					// var svgstr = ImageTracer.imagedataToSVG( newdata, { ltres:0.1, qtres:1} );
@@ -146,9 +160,11 @@ function receiveImage(e) {
 					// cannyarray = sol.map(i => cannyarray[i]);
 					// createPath(cannyarray);
 					// Test if cannyarray has valid x,y coordinates
+				cannyarray = reduce(cannyarray);
+				
 				startAnim(cannyarray);
 				
-				}
+				// }
 			}
 			// console.log(imgdata);
 		img.src = event.target.result;
@@ -162,7 +178,33 @@ function receiveImage(e) {
 
 // Testing GPU function
 
-// const gpu = new GPU();
+const gpu = new GPU();
+
+
+const gpuComplexAdd = gpu.createKernel(function(a, b){
+
+}).setOutput(2);
+
+
+// // dft on gpu --> array of k length, 5 values each
+// const gpuGenerate = gpu.createKernel(function(eps,t,n){
+// 	var x = 400;
+// 	var y = 400;
+// 	const array2 = [[0.08,5], [2,1]];
+// 	let ep = eps[this.thread.x];
+
+// 	if (this.thread.y == 0) {
+// 		x += eps[this.thread.x][3] * Math.cos( eps[this.thread.x][2] * t +  eps[this.thread.x][4]);
+// 		return x;
+// 	}
+// 	else{
+// 		y += eps[this.thread.x][3] * Math.sin( eps[this.thread.x][2] * t +  eps[this.thread.x][4]);
+// 		return y;
+// 	}
+// 	// x += ep[3] * Math.cos(ep[2] * this.thread.x * dt + ep[4]);
+// 	// y += ep[3] * Math.sin(ep[2] * this.thread.x * dt + ep[4]);
+// 	return eps[this.thread.x][0];
+// }).setOutput([f_size,2])
 
 // Obsolete path solving function 
 

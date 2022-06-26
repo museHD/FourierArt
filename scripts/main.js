@@ -13,6 +13,7 @@ fetch("./test.json")
 	}
 });
 
+
 // const pp = fetch("https://storage.googleapis.com/quickdraw_dataset/full/simplified/penguin.ndjson", { mode: 'no-cors' })
 // .then(response => {
 // 	return response.blob();
@@ -41,7 +42,7 @@ var drawmethod = 0;
 
 var requestID;
 var slider = document.getElementById("myRange");
-var cannyarray = []
+// var cannyarray = []
 function setup(){
 	
 	// Initialise API
@@ -121,6 +122,10 @@ function activateUserDrawing(){
 
 function startAnim(inputpath) {
 
+	ctx.clearRect(0,0,canvas.width,canvas.height);
+	ctx2.clearRect(0,0,canvas.width,canvas.height);
+	
+
 	console.log(inputpath.length);
 	const input_set = inputpath.reduce((acc, current) => {
 		const x = acc.find(item => item.x === current.x && item.y === current.y);
@@ -146,6 +151,7 @@ function startAnim(inputpath) {
 
 function stopAnim() {
 	cancelAnimationFrame(requestID);
+	time = 0;
 	Controller.clearData();
 	ctx.clearRect(0,0,canvas.width,canvas.height);
 	ctx2.clearRect(0,0,canvas.width,canvas.height);
@@ -190,33 +196,27 @@ function activateAPIDrawing() {
 	document.getElementById("api-settings").style.display = "block";
 	document.getElementById("api-btn").classList.add("btn-pressed");
 	
-	// var drawings = fetch("https://storage.googleapis.com/quickdraw_dataset/full/simplified/penguin.ndjson");
-	// const storage = Storage();
-	// async function downloadByteRange() {
-	// 	const options = {
-	// 	  destination: destFileName,
-	// 	  start: 0,
-	// 	  end: 10000,
-	// 	};
-	  
-	// 	// Downloads the file from the starting byte to the ending byte specified in options
-	// 	await storage.bucket("quickdraw_dataset/full/simplified/").file("line.ndjson").download(options);
-	  
-	// 	console.log(
-	// 	  `gs://{"bucketName"} downloaded to ${destFileName} from byte ${startByte} to byte ${endByte}.`
-	// 	);
-	//   }
-	  
-	//   downloadByteRange();
-// 	fetch("https://storage.googleapis.com/quickdraw_dataset/full/simplified/penguin.ndjson", { mode: 'no-cors' })
-// .then((res) => { return res.blob(); })
-// .then((data) => {
-// 	console.log(data);
-//   var a = document.createElement("a");
-//   a.href = window.URL.createObjectURL(data);
-// //   a.download = "FILENAME";
-// //   a.click();
-// });
+const bucketName = 'quickdraw_dataset/full/simplified';
+
+// The ID of your GCS file
+const fileName = 'triangle.ndjson';
+
+// Imports the Google Cloud client library
+// const {Storage} = require('@google-cloud/storage');
+
+// Creates a client
+const storage = new Storage();
+
+async function downloadIntoMemory() {
+  // Downloads the file into a buffer in memory.
+  const contents = await storage.bucket(bucketName).file(fileName).download();
+
+  console.log(
+    `Contents of gs://${bucketName}/${fileName} are ${contents.toString()}.`
+  );
+}
+
+downloadIntoMemory().catch(console.error);
 }
 
 function getRandomDrawing(){
@@ -349,15 +349,15 @@ class complex{
 		this.im = b;
 	}
 
-	add(x){
-		const re = this.re + x.re;
-		const im = this.im + x.im;
+	static add(a, b){
+		const re = a.re + b.re;
+		const im = a.im + b.im;
 		return new complex(re, im);
 	}
 
-	multiply(x){
-		const re = this.re * x.re - this.im * x.im;
-		const im = this.re * x.im + this.im * x.re;
+	static multiply(a, b){
+		const re = a.re * b.re - a.im * b.im;
+		const im = a.re * b.im + a.im * b.re;
 		return new complex(re, im);
 	}
 }
@@ -371,14 +371,16 @@ function dft(vals) {
 
 	// Iterate through each val
 	for (var k = 0; k < N; k++) {
-
+		// var t0 = performance.now();
 		var sum = new complex(0,0);
+		let N_angle = 2*Math.PI*k/N
+		for (let n=0; n < N; n++) {
 
-		for (n=0; n < N; n++) {
-
-			let angle = 2*Math.PI*k*n/N
+			let angle = N_angle*n
 			let c = new complex(Math.cos(angle), -Math.sin(angle));
-			sum = sum.add(vals[n].multiply(c));
+			let eachval = complex.multiply(c, vals[n]);
+			sum = complex.add(eachval, sum);
+
 		}
 		sum.re = sum.re / N;
 		sum.im = sum.im / N;
@@ -388,6 +390,8 @@ function dft(vals) {
 		let freq = k;
 
 		output[k] = {re:sum.re, im:sum.im, freq, amp, phase};
+		// var t1 = performance.now();
+		// console.log(`outer takes ${(t1-t0).toFixed(3)}`);
 	}
 	return output;
 }
@@ -508,6 +512,30 @@ class EpicycleController{
 			var x = 400;
 			var y = 400;
 			const array2 = [[0.08,5], [2,1]];
+			let ep = eps[this.thread.x];
+
+			if (this.thread.y == 0) {
+				x += eps[this.thread.x][3] * Math.cos( eps[this.thread.x][2] * t +  eps[this.thread.x][4]);
+				return x;
+			}
+			else{
+				y += eps[this.thread.x][3] * Math.sin( eps[this.thread.x][2] * t +  eps[this.thread.x][4]);
+				return y;
+			}
+			// x += ep[3] * Math.cos(ep[2] * this.thread.x * dt + ep[4]);
+			// y += ep[3] * Math.sin(ep[2] * this.thread.x * dt + ep[4]);
+			return eps[this.thread.x][0];
+		}).setOutput([f_size,2])
+		gpuarray = gpuGenerate(cpuarray, time,cpuarray.length);
+
+		console.log(gpuarray);
+		var t1 = performance.now();
+		console.log(`gpu cos takes ${(t1-t0).toFixed(3)}`);
+		
+		const gpuCache = gpu.createKernel(function(eps,t,n){
+			var x = 400;
+			var y = 400;
+			const array2 = [[0.08,5], [2,1]];
 			let ep = eps[this.thread.y];
 
 			if (this.thread.x == 0) {
@@ -522,26 +550,7 @@ class EpicycleController{
 			// y += ep[3] * Math.sin(ep[2] * this.thread.x * dt + ep[4]);
 			return eps[this.thread.y][0];
 		}).setOutput([2, f_size])
-		gpuarray = gpuGenerate(cpuarray, dt,cpuarray.length);
-		console.log(gpuarray);
-		var t1 = performance.now();
-		console.log(`gpu cos takes ${(t1-t0).toFixed(3)}`);
-		
 
-		// const gpuGenerate = gpu.createKernel(function(fourier_vals){
-		// 	// var out = [];
-		// 	let freq = fourier_vals[this.thread.x];
-		// 	let ob = {x:freq};
-		// 	// let radius = fourier_vals[this.thread.x][1];
-		// 	// let phase = fourier_vals[this.thread.x][2];
-			
-		// 	return ob;
-		// }).setOutput([f_size]);
-		// console.log(gpuGenerate(inarray));
-		// const kernel = gpu.createKernel(function() {
-		// 	return [0.08, 2];
-		//    }).setOutput([100]);
-		//   console.log(kernel());
 	}
 
 	generateEpicycles(x, y, fourier_vals, f_size) {
