@@ -1,17 +1,14 @@
 // Create Canvas
 // const canvasplaceholder = document.getElementById("canvas-placeholder");
 var testpath = [];
-fetch("./test.json")
-.then(response => {
-   return response.json();
-})
-.then(function(data){
-	for (let i = 0; i < data.length; i++) {
-		let pos = {x:data[i][0],y:data[i][1]};
-		testpath.push(pos);
-		
-	}
-});
+// fetch("./examples/rabbit.json")
+// .then(response => {
+//    return response.json();
+// })
+// .then(function(data){
+// testpath=arrToXY(data);
+// startAnim(testpath);
+// });
 
 
 // const pp = fetch("https://storage.googleapis.com/quickdraw_dataset/full/simplified/penguin.ndjson", { mode: 'no-cors' })
@@ -124,6 +121,7 @@ function activateUserDrawing(){
 
 
 function startAnim(inputpath) {
+	
 	ctx3.clearRect(0,0,300,300);
 
 	// debugger;
@@ -146,7 +144,7 @@ function startAnim(inputpath) {
 	ctx2.lineWidth = 2;
 	ctx.clearRect(0,0,canvas.width,canvas.height);
 	ctx2.clearRect(0,0,canvas.width,canvas.height);
-
+	stopAnim();
 	fourier_path = dft(convertToComplex(input_set));
 	slider.max = fourier_path.length-1;
 	slider.value = slider.max-1;
@@ -237,6 +235,70 @@ function getRandomDrawing(){
 
 function retrieveAPIImage(category){
 	// Get image from API according to category
+}
+
+function rabbitExample() {
+	console.log("rabbit");
+	let path = [];
+	fetch("./examples/rabbit.json")
+	.then(response => {
+	return response.json();
+	}).then(function(data){
+	path=arrToXY(data);
+	startAnim(path);
+	});
+
+}
+function controllerExample() {
+	let path = [];
+	fetch("./examples/controller.json")
+	.then(response => {
+	return response.json();
+	}).then(function(data){
+	path=arrToXY(data);
+	startAnim(path);
+	});
+
+
+}
+
+function catExample() {
+	let path = [];
+	fetch("./examples/cat.json")
+	.then(response => {
+	return response.json();
+	}).then(function(data){
+	path=arrToXY(data);
+	startAnim(path);
+	});
+
+
+}
+
+function pidgeonExample() {
+	let path = [];
+	fetch("./examples/pidgeon.json")
+	.then(response => {
+	return response.json();
+	}).then(function(data){
+	path=arrToXY(data);
+	startAnim(path);
+	});
+
+
+}
+
+function banjoExample() {
+	let path = [];
+	fetch("./examples/banjo.json")
+	.then(response => {
+	return response.json();
+	}).then(function(data){
+	path=arrToXY(data);
+	startAnim(path);
+	});
+
+
 }
 
 function sortPath(points) {
