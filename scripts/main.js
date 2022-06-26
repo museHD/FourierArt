@@ -470,7 +470,7 @@ class EpicycleController{
 			let phase = f_vals[i].phase;
 			inarray.push([freq,radius,phase]);
 		}
-		console.log(inarray)
+		// console.log(inarray)
 	
 
 
@@ -502,23 +502,31 @@ class EpicycleController{
 		// 	});
 		//   });
 		// console.log(output);
-		const gpuCache = gpu.createKernel(function(eps,dt,n){
+
+		// For any given time, compute x and y coordinates of all epicycles
+		const gpuGenerate = gpu.createKernel(function(eps,t,n){
 			var x = 400;
 			var y = 400;
 			const array2 = [[0.08,5], [2,1]];
-			// iterate through eps
-			// for (let ep = 0; ep < n; ep++) {
-			// 	const current = eps[ep];
-			// 	x += current[3] * Math.cos(current[2] * this.thread.x * dt + current[4]);
-			// 	y += current[3] * Math.sin(current[2] * this.thread.x * dt + current[4]);
-				
-			// }
-			return this.thread.x;
+			let ep = eps[this.thread.y];
+
+			if (this.thread.x == 0) {
+				x += eps[this.thread.y][3] * Math.cos( eps[this.thread.y][2] * this.thread.y * t +  eps[this.thread.y][4]);
+				return x;
+			}
+			else{
+				y += eps[this.thread.y][3] * Math.sin( eps[this.thread.y][2] * this.thread.y * t +  eps[this.thread.y][4]);
+				return y;
+			}
+			// x += ep[3] * Math.cos(ep[2] * this.thread.x * dt + ep[4]);
+			// y += ep[3] * Math.sin(ep[2] * this.thread.x * dt + ep[4]);
+			return eps[this.thread.y][0];
 		}).setOutput([2, f_size])
-		gpuarray = gpuCache(cpuarray, dt,cpuarray.length);
+		gpuarray = gpuGenerate(cpuarray, dt,cpuarray.length);
 		console.log(gpuarray);
 		var t1 = performance.now();
 		console.log(`gpu cos takes ${(t1-t0).toFixed(3)}`);
+		
 
 		// const gpuGenerate = gpu.createKernel(function(fourier_vals){
 		// 	// var out = [];
