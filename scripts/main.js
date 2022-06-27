@@ -1,24 +1,4 @@
-// Create Canvas
-// const canvasplaceholder = document.getElementById("canvas-placeholder");
 var testpath = [];
-// fetch("./examples/rabbit.json")
-// .then(response => {
-//    return response.json();
-// })
-// .then(function(data){
-// testpath=arrToXY(data);
-// startAnim(testpath);
-// });
-
-
-// const pp = fetch("https://storage.googleapis.com/quickdraw_dataset/full/simplified/penguin.ndjson", { mode: 'no-cors' })
-// .then(response => {
-// 	return response.blob();
-// })
-// .then(function(data){
-// 	console.log(data);
-
-// });
 
 // Setting up Canvases
 const canvas = document.getElementById("layer1");
@@ -43,7 +23,7 @@ var drawmethod = 0;
 
 var requestID;
 var slider = document.getElementById("myRange");
-// var cannyarray = []
+
 function setup(){
 	
 	// Initialise API
@@ -53,18 +33,13 @@ function setup(){
 // Receive uploaded file --> draw image on canvas --> EdgeDetection --> Draw EdgeDetection onto canvas --> read canvas as ImageData --> Clear canvas
 // Fix to automatically get ImageData later
 const image_input = document.getElementById("image-input");
-
 image_input.addEventListener("change", receiveImage);
-
-
-
-const image_output = document.getElementById("display-image");
-// image_output.src = img_to_process;
 
 
 ////////////////////////////////
 // User Drawing functionality //
 ////////////////////////////////
+
 
 var fourier_path = [];
 var inputpath = [];
@@ -95,6 +70,9 @@ function activateUserDrawing(){
 		user_drawing.push({x,y})
 	}
 
+	/**
+	 * Canvas Interaction Handlers
+	 */
 
 	window.mouseMoveHandler = function(e){
 		prevx = x;
@@ -125,15 +103,13 @@ function activateUserDrawing(){
 
 }
 
-
+/**
+ * Processes and Starts animation using inputpath
+ * @param {array} inputpath 
+ */
 function startAnim(inputpath) {
 	alert('Loading... Please wait. Processing larger files/drawings can take quite some time');
 	ctx3.clearRect(0,0,300,300);
-
-	// debugger;
-	// let imdata = ctx.getImageData(0, 0, cw, ch);
-	// imdata = resizeImageData(imdata,target_canv.width, target_canv.height);
-	// ctx3.putImageData(imdata,0,0);
 	draw(inputpath,true,target_canv);
 
 	console.log(inputpath.length);
@@ -162,6 +138,9 @@ function startAnim(inputpath) {
 	displayAnimation(fourier_path);
 }
 
+/**
+ * Stops current running animation and clears canvases
+ */
 function stopAnim() {
 	cancelAnimationFrame(requestID);
 	time = 0;
@@ -186,64 +165,51 @@ function activateFileDrawing(){
 	image_input.value = '';
 	document.getElementById("img-settings").style.display = "block";
 	document.getElementById("file-btn").classList.add("btn-pressed");
-
-
-
-
 }
 
-function getImage(){
-	// Receive image from user
-	processImage()
-	// Return Path
-}
+/**
+ * Unimplemented API Code
+ */
 
 ///////////////////////////////
 // API Drawing Functionality //
 ///////////////////////////////
 
-function activateAPIDrawing() {
-	stopAnim();
-	drawmethod = 0; //Set draw method to lines
-	hideAllSettings();
-	ctx.clearRect(0,0,800,800);
-	ctx2.clearRect(0,0,800,800);
-	document.getElementById("api-settings").style.display = "block";
-	document.getElementById("api-btn").classList.add("btn-pressed");
+// function activateAPIDrawing() {
+// 	stopAnim();
+// 	drawmethod = 0; //Set draw method to lines
+// 	hideAllSettings();
+// 	ctx.clearRect(0,0,800,800);
+// 	ctx2.clearRect(0,0,800,800);
+// 	document.getElementById("api-settings").style.display = "block";
+// 	document.getElementById("api-btn").classList.add("btn-pressed");
 	
-const bucketName = 'quickdraw_dataset/full/simplified';
+// const bucketName = 'quickdraw_dataset/full/simplified';
 
-// The ID of your GCS file
-const fileName = 'triangle.ndjson';
+// // The ID of your GCS file
+// const fileName = 'triangle.ndjson';
 
-// Imports the Google Cloud client library
-// const {Storage} = require('@google-cloud/storage');
+// // Imports the Google Cloud client library
+// // const {Storage} = require('@google-cloud/storage');
 
-// Creates a client
-const storage = new Storage();
+// // Creates a client
+// const storage = new Storage();
 
-async function downloadIntoMemory() {
-  // Downloads the file into a buffer in memory.
-  const contents = await storage.bucket(bucketName).file(fileName).download();
+// async function downloadIntoMemory() {
+//   // Downloads the file into a buffer in memory.
+//   const contents = await storage.bucket(bucketName).file(fileName).download();
 
-  console.log(
-    `Contents of gs://${bucketName}/${fileName} are ${contents.toString()}.`
-  );
-}
+//   console.log(
+//     `Contents of gs://${bucketName}/${fileName} are ${contents.toString()}.`
+//   );
+// }
 
-downloadIntoMemory().catch(console.error);
-}
+// downloadIntoMemory().catch(console.error);
+// }
 
-function getRandomDrawing(){
-	// Get user selected category
-	getCategory()
-	retrieveAPIImage()
-	// Return Path
-}
-
-function retrieveAPIImage(category){
-	// Get image from API according to category
-}
+/**
+ * Functions for examples
+ */
 
 function rabbitExample() {
 	setDrawMethod(1);
@@ -314,104 +280,114 @@ function banjoExample() {
 
 }
 
-function sortPath(points) {
-	var out = [];
-	const r = 10;
-	for (let i = 0; i < points.length; i++) {
-		var point = points[i];
-		for (var scout = 1; scout < r; scout++) {
-			// Ensure point is not already in outarray
-			if (containsObject(point, out) == false){
-				var positions = {
-					up:{x:point.x, y:point.y - scout},
-					top_right:{x:point.x + scout, y:point.y - scout},
-					right:{x:point.x + scout, y:point.y},
-					bottom_right:{x:point.x + scout, y:point.y + scout},
-					bottom:{x:point.x, y:point.y + scout},
-					bottom_left:{x:point.x - scout, y:point.y + scout},
-					left:{x:point.x - scout, y:point.y},
-					top_left:{x:point.x - scout, y:point.y - scout}
-				}
 
-				// OBJECTS PASSED BY REF so doesn't check with given points
-				for (const position in positions) {
-					// console.log(positions[position].x);
-					// console.log(containsObject(position, points));
-					var nextindex = containsObject(positions[position], points);
-					// console.log(nextindex);
-					if (nextindex > 0){
-						// console.log(points[nextindex]);
-						out.push(points[nextindex]);
-						points.splice(i+1,0,points[nextindex]);
-					}
-				}
-			}
-		}
-	}
-	return out;
+/**
+ * Unimplemented Path Sort
+ */
+
+// function sortPath(points) {
+// 	var out = [];
+// 	const r = 10;
+// 	for (let i = 0; i < points.length; i++) {
+// 		var point = points[i];
+// 		for (var scout = 1; scout < r; scout++) {
+// 			// Ensure point is not already in outarray
+// 			if (containsObject(point, out) == false){
+// 				var positions = {
+// 					up:{x:point.x, y:point.y - scout},
+// 					top_right:{x:point.x + scout, y:point.y - scout},
+// 					right:{x:point.x + scout, y:point.y},
+// 					bottom_right:{x:point.x + scout, y:point.y + scout},
+// 					bottom:{x:point.x, y:point.y + scout},
+// 					bottom_left:{x:point.x - scout, y:point.y + scout},
+// 					left:{x:point.x - scout, y:point.y},
+// 					top_left:{x:point.x - scout, y:point.y - scout}
+// 				}
+
+// 				// OBJECTS PASSED BY REF so doesn't check with given points
+// 				for (const position in positions) {
+// 					// console.log(positions[position].x);
+// 					// console.log(containsObject(position, points));
+// 					var nextindex = containsObject(positions[position], points);
+// 					// console.log(nextindex);
+// 					if (nextindex > 0){
+// 						// console.log(points[nextindex]);
+// 						out.push(points[nextindex]);
+// 						points.splice(i+1,0,points[nextindex]);
+// 					}
+// 				}
+// 			}
+// 		}
+// 	}
+// 	return out;
 	
-}
+// }
 
 
-function createPath(points){
+// function createPath(points){
 
-	// var p0 = points[0];
-	var size = points.length;
+// 	// var p0 = points[0];
+// 	var size = points.length;
 
-	// Swap points in an array based on index
-	function swap_points(a, b, array){
-		var temp = array[a];
-		array[a] = array[b];
-		array[b] = temp;
-	}
+// 	// Swap points in an array based on index
+// 	function swap_points(a, b, array){
+// 		var temp = array[a];
+// 		array[a] = array[b];
+// 		array[b] = temp;
+// 	}
 
-	// Squared Dist b/w a & b
-	function dist(a,b){
-		return ((a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y));
-	}
+// 	// Squared Dist b/w a & b
+// 	function dist(a,b){
+// 		return ((a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y));
+// 	}
 
-	// Orientation of points (0=colinear/1=clockwise/2=anticlockwise)
-	function orientation(p, q, r){
-		var val = ((q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y));
-		if (val == 0){return 0;}
-		// if (val > 0){return 1;}
-		// if (val < 0){return 2;}
-		return (val > 0)? 1: 2;
-	}
+// 	// Orientation of points (0=colinear/1=clockwise/2=anticlockwise)
+// 	function orientation(p, q, r){
+// 		var val = ((q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y));
+// 		if (val == 0){return 0;}
+// 		// if (val > 0){return 1;}
+// 		// if (val < 0){return 2;}
+// 		return (val > 0)? 1: 2;
+// 	}
 
-	function sortCompare(p1, p2){
+// 	function sortCompare(p1, p2){
 
-		var o = orientation(p0, p1, p2);
-		if (o == 0){
-			return (dist(p0, p2) >= dist(p0, p1))? -1:1;
-		}
-		return (o == 2)? -1:1;
+// 		var o = orientation(p0, p1, p2);
+// 		if (o == 0){
+// 			return (dist(p0, p2) >= dist(p0, p1))? -1:1;
+// 		}
+// 		return (o == 2)? -1:1;
 
-	}
+// 	}
 
 
-	var ymin = points[0].y;
-	var min = 0;
-	for (let i = 1; i < size; i++) {
-		var y = points[i].y;
+// 	var ymin = points[0].y;
+// 	var min = 0;
+// 	for (let i = 1; i < size; i++) {
+// 		var y = points[i].y;
 
-		if ((y > ymin) || ((ymin == y) && (points[i].x < points[min].x))){
-			ymin = points[i].y;
-			min = i;
-		}
+// 		if ((y > ymin) || ((ymin == y) && (points[i].x < points[min].x))){
+// 			ymin = points[i].y;
+// 			min = i;
+// 		}
 		
-	}
+// 	}
 
-	// swap_points(0, min, points);
-	p0 = points[0];
-	points.sort(sortCompare);
-	// draw(points);
+// 	// swap_points(0, min, points);
+// 	p0 = points[0];
+// 	points.sort(sortCompare);
+// 	// draw(points);
 	
-}
+// }
 /////////////////
 // Processing  //
 /////////////////
 
+/**
+ * Converts array of points into an array of complex numbers
+ * @param {array} path 
+ * @returns Complex Array
+ */
 function convertToComplex(path=[]){
 	var c_path = [];
 	for (let i = 0; i < path.length; i++) {
@@ -427,6 +403,9 @@ function convertToComplex(path=[]){
 // Discrete Fourier Transform  //
 /////////////////////////////////
 
+/**
+ * Class for complex numbers
+ */
 class complex{
 	constructor(a, b){
 		this.re = a;
@@ -445,11 +424,13 @@ class complex{
 		return new complex(re, im);
 	}
 }
-
+/**
+ * Generate data for epicycles using path
+ * @param {array} vals Array of complex numbers
+ * @returns Epicycle data 
+ */
 function dft(vals) {
-	// Generate data for epicycles using path
-	// Return complex values?
-	
+
 	const N = vals.length;
 	var output = [];
 
@@ -485,19 +466,13 @@ function dft(vals) {
 // Output //
 ////////////
 
+/**
+ * Setting Global variables for control
+ */
 var time = 0;
 var dt = 0;
 var n_epicycles = 10;
 
-// for safety (undefiend val)
-// fourier_vals = arr.filter(element => {
-//  if (Object.keys(element).length !== 0) {
-//  return true;
-//  }
-
-//  return false;
-//  });
-// // 
 
 class Epicycle{
 	constructor(x,y,freq,radius,phase){
@@ -509,7 +484,10 @@ class Epicycle{
 		this.cache = [];
 		this.cachepos = 0;
 	}
-
+	
+	/**
+	 * Loads next x and y from cache
+	 */
 	loadNextCache(){
 
 			
@@ -528,6 +506,9 @@ class Epicycle{
 		this.y = Controller.epicycles[this.freq-1].y + this.radius * Math.sin(this.freq * timenow + this.phase);
 	}
 
+	/**
+	 * Pusehes current position to cache
+	 */
 	updateCache(){
 		var pos = {x:this.x, y:this.y};
 		// console.log(pos);
@@ -637,9 +618,17 @@ class EpicycleController{
 
 	}
 
+	/**
+	 * Create Epicycles and Generate cache
+	 * @param {number} x x-coordinate of start
+	 * @param {number} y y-coordinate of start
+	 * @param {array} fourier_vals array of Fourier vals
+	 * @param {number} f_size size of fourier array
+	 * @returns x and y coordinates of the last epicycle
+	 */
 	generateEpicycles(x, y, fourier_vals, f_size) {
-		// create circles and epicycle data
-		// Return epicycle data
+
+		// Generate initial positions of epicycles
 		this.epicycles = [];
 		dt = Math.PI*2 / fourier_vals.length;
 		for (var i = 1; i < f_size; i++) {
@@ -652,12 +641,10 @@ class EpicycleController{
 			y += radius * Math.sin(freq * time + phase);
 			this.epicycles.push(new Epicycle(x,y,freq,radius,phase));
 			
-			// this.epicycles[i-1].updateCache();
 		}
 		this.epicycles.sort((a,b) => {return b.radius - a.radius});
 
-		// var cachetime = 0;
-
+		// Generate Cache
 		for (var cachetime = 0; cachetime < Math.PI*2; cachetime += dt){
 			var x = cw/2;
 			var y = ch/2;
@@ -670,6 +657,7 @@ class EpicycleController{
 			}
 			
 		}
+		// Remove undefined objects from epicycle caches
 		for (var ep = 0; ep < this.epicycles.length-1; ep++){
 			this.epicycles[ep].cache = this.epicycles[ep].cache.filter(element => {
 				if (Object.keys(element).length !== 0) {
@@ -683,6 +671,9 @@ class EpicycleController{
 	return {x,y};
 	}
 
+	/**
+	 * Draw epicycles and trail on canvas1 and canvas2 respectively
+	 */
 	drawEpicycles(){
 		var prevx = this.epicycles[0].x;
 		var prevy = this.epicycles[0].y;
@@ -719,88 +710,58 @@ class EpicycleController{
 			ctx2.arc(currentepicycle.x, currentepicycle.y, 1, 0, 2 * Math.PI);
 		}
 		ctx2.stroke();
-		// if (currentepicycle.cachepos == 0){debugger;}        
+		      
 	}
 
 	clearData(){
 		this.epicycles = [];
 	}
-
-	// intital updatepicycles with real time calcs and cache saving (maybe)
-	// updateEpicycles(){
-	//  time += dt;
-	//  for (var ep = 0; ep < this.epicycles; ep++){
-	//      this.epicycles[ep].updateEpicycle();
-	//  }
-	// }
 }
 
-function generateEpicycles(x, y, fourier_vals, f_size) {
-	// create circles and epicycle data
-	// Return epicycle data
-	dt = Math.PI*2 / inputpath.length;
-	for (var i = 1; i < f_size; i++) {
-		let prevx = x;
-		let prevy = y;
-		let freq = fourier_vals[i].freq;
-		let radius = fourier_vals[i].amp;
-		let phase = fourier_vals[i].phase;
-		x += radius * Math.cos(freq * time + phase);
-		y += radius * Math.sin(freq * time + phase);
+/**
+ * Deprecated function to generate and draw epicycles for given time
+ */
 
-		ctx.beginPath();
-		ctx.arc(x, y, radius, 0, 2 * Math.PI);
-		ctx.stroke();
+// function generateEpicycles(x, y, fourier_vals, f_size) {
+// 	// create circles and epicycle data
+// 	// Return epicycle data
+// 	dt = Math.PI*2 / inputpath.length;
+// 	for (var i = 1; i < f_size; i++) {
+// 		let prevx = x;
+// 		let prevy = y;
+// 		let freq = fourier_vals[i].freq;
+// 		let radius = fourier_vals[i].amp;
+// 		let phase = fourier_vals[i].phase;
+// 		x += radius * Math.cos(freq * time + phase);
+// 		y += radius * Math.sin(freq * time + phase);
 
-		ctx.beginPath();
-		ctx.moveTo(prevx,prevy);
-		ctx.lineTo(x, y);
-		ctx.stroke();
-	}
-	return {x,y};
-	}
+// 		ctx.beginPath();
+// 		ctx.arc(x, y, radius, 0, 2 * Math.PI);
+// 		ctx.stroke();
+
+// 		ctx.beginPath();
+// 		ctx.moveTo(prevx,prevy);
+// 		ctx.lineTo(x, y);
+// 		ctx.stroke();
+// 	}
+// 	return {x,y};
+// 	}
 
 
 const perf = document.getElementById('performance');
 
 var Controller = new EpicycleController();
 var trail = [];
+
+/**
+ * Displays animation
+ */
 function displayAnimation() {
 	t0 = performance.now();
 
-	// Draw circles onto canvas and create animation
 	ctx.clearRect(0,0,cw,ch);
-	// var point = Controller.epicycles[slider.value];
-	// console.log(point);
-	// var point = generateEpicycles(cw/2, ch/2, fourier_path, slider.value);
-	//
-	// ctx2.beginPath();
-	// ctx2.arc(point.x, point.y, 1, 0, 2 * Math.PI);
-	// ctx2.stroke();
-
 	Controller.drawEpicycles();
 
-
-	// trail.push(point);
-	// let prevx = trail[0].x;
-	// let prevy = trail[0].y;
-
-
-	// for (let x = 1; x < trail.length; x++){
-
-	//  ctx.moveTo(prevx,prevy);
-	//  ctx.lineTo(trail[x].x, trail[x].y);
-	//  ctx.stroke();
-	//  prevx = trail[x-1].x;
-	//  prevy = trail[x-1].y;
-
-	
-	// // trail.push(point);
-	// // for (let x = 0; x < trail.length; x++){
-	// //   ctx.beginPath();
-	// //   ctx.arc(trail[x].x, trail[x].y, 1, 0, 2 * Math.PI);
-	// //   ctx.stroke();
-	// } 
 	time += dt;
 	if (time > Math.PI*2){
 		time = 0;
