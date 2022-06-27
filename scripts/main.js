@@ -209,6 +209,7 @@ function activateFileDrawing(){
 
 /**
  * Functions for examples
+ * Works Better when separated
  */
 
 function rabbitExample() {
@@ -324,59 +325,6 @@ function banjoExample() {
 // }
 
 
-// function createPath(points){
-
-// 	// var p0 = points[0];
-// 	var size = points.length;
-
-// 	// Swap points in an array based on index
-// 	function swap_points(a, b, array){
-// 		var temp = array[a];
-// 		array[a] = array[b];
-// 		array[b] = temp;
-// 	}
-
-// 	// Squared Dist b/w a & b
-// 	function dist(a,b){
-// 		return ((a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y));
-// 	}
-
-// 	// Orientation of points (0=colinear/1=clockwise/2=anticlockwise)
-// 	function orientation(p, q, r){
-// 		var val = ((q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y));
-// 		if (val == 0){return 0;}
-// 		// if (val > 0){return 1;}
-// 		// if (val < 0){return 2;}
-// 		return (val > 0)? 1: 2;
-// 	}
-
-// 	function sortCompare(p1, p2){
-
-// 		var o = orientation(p0, p1, p2);
-// 		if (o == 0){
-// 			return (dist(p0, p2) >= dist(p0, p1))? -1:1;
-// 		}
-// 		return (o == 2)? -1:1;
-
-// 	}
-
-
-// 	var ymin = points[0].y;
-// 	var min = 0;
-// 	for (let i = 1; i < size; i++) {
-// 		var y = points[i].y;
-
-// 		if ((y > ymin) || ((ymin == y) && (points[i].x < points[min].x))){
-// 			ymin = points[i].y;
-// 			min = i;
-// 		}
-		
-// 	}
-
-// 	// swap_points(0, min, points);
-// 	p0 = points[0];
-// 	points.sort(sortCompare);
-// 	// draw(points);
 	
 // }
 /////////////////
