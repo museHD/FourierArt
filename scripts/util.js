@@ -1,6 +1,12 @@
 // Convert image into path of points
 // Convert edges to [x,y]
+
 const divmod = (x, y) => [(x % y)/4, Math.floor(x / y)];
+/**
+ * Converts Image data into array of points {x,y}
+ * @param {ImageData} imdata ImageData from canvas
+ * @returns Array of bright points
+ */
 function imgToArray(imdata){
     var out = [];
     const data = imdata.data;
@@ -14,17 +20,19 @@ function imgToArray(imdata){
                 out.push({x:cords[0],y:cords[1]});
             }
             else{
-                // console.log(cords)
             }
         }
-        // if (val != 0){cannyarray.push({x});}
     }
 	return out;
-    // cannyarray = [...new Set(out)];
 }
 
-
-// Input array of coordinates and draw on canvas
+/**
+ * Input array of points and draw onto specified canvas
+ * @param {array} ar array of points
+ * @param {boolean} dot whether to use dots or not
+ * @param {Canvas} canv canvas object to draw onto
+ * @returns null
+ */
 function draw(ar, dot=false,canv){
 	if (ar.length==0) {
 		return;
@@ -47,27 +55,33 @@ function draw(ar, dot=false,canv){
 		prevx = x;
 		prevy = y;
 	}
-
 }
 
 
-// Check if array contains provided object 
+/**
+ * Check if an array contains the provided object
+ * @param {object} obj object to check in array
+ * @param {array} list array to be searched
+ * @returns index of object, or false
+ */
 function containsObject(obj, list) {
     var i;
     var obx = obj.x;
     var oby = obj.y;
     for (i = 0; i < list.length; i++) {
-		// console.log(list[i].x, obj);
         if ((list[i].x == obx) && (list[i].y == oby)) {
-			// console.log(list[i][0]);
             return i;
         }
     }
-
     return false;
 }
 
-// Convert array to x and y coordinates and output to provided array
+
+/**
+ * Convert array to x and y coordinates and output to provided array
+ * @param {Array} data 2D array of coordinates
+ * @returns array of points
+ */
 function arrToXY (data){
 	var out = [];
 	if(data[0][0] == undefined || data[0][1] == undefined){throw("Invalid Array for Conversion");}
@@ -78,6 +92,10 @@ function arrToXY (data){
 	return out;
 }
 
+/**
+ * Displays loading message depending on paramter
+ * @param {number} on 1 or 0
+ */
 function displayLoadingMsg(on) {
 	var loading_el = document.getElementById("loading");
 	if (on == 1){loading_el.style.display = "block";}
@@ -85,6 +103,10 @@ function displayLoadingMsg(on) {
 	
 }
 
+/**
+ * Changes draw method between lines and dots
+ * @param {boolean} val 1 or 0
+ */
 function setDrawMethod(val) {
 	let btn = document.getElementById("drawmethod");
 	if (val == 1){
@@ -98,6 +120,9 @@ function setDrawMethod(val) {
 	
 }
 
+/**
+ * Hides all settings from Control Panel
+ */
 function hideAllSettings() {
     const settings = document.getElementsByClassName("settings");
     for (let index = 0; index < settings.length; index++) {
@@ -115,6 +140,11 @@ function hideAllSettings() {
 
 }
 
+/**
+ * Reduces array by skipping over elements. Ensures array size is below 4000
+ * @param {array} arr array to be reduced
+ * @returns reduced array
+ */
 function reduce(arr){
 	out = [];
 	n = Math.ceil(arr.length/4000);
@@ -125,44 +155,24 @@ function reduce(arr){
 	}
 	return out;
 }
-
+/**
+ * Receive, process and start animation for uploaded image
+ * @param {event} e 
+ */
 function receiveImage(e) {
 	var reader = new FileReader();
 	reader.onload = function(event){
 		var img = new Image();
 		img.onload = function(){
 
-			displayLoadingMsg(1);
-			const cannyworker = new Worker('./scripts/canny/dist/worker.js')
-			cannyworker.postMessage({
-				cmd: 'appData',
-				data: {
-					width: ch,
-					height: cw,
-					// ut: 0.9,
-					// lt: 0.85
-				} 
-			});
-			
+			displayLoadingMsg(1);		
 			ctx.drawImage(img,0,0,cw,ch);
 
 			var pixels = ctx.getImageData(0, 0, cw, ch).data;
 
-			// cannyworker.postMessage({
-			// 	cmd: 'imgData',
-			// 	data: pixels
-			//   });
-			// ctx.clearRect(0,0,canvas.width,canvas.height);
-			
-			// OLD EDGE DETECTION CODE
-			// canvas_obj = JSON.parse(JSON.stringify(canvas));
 			
 			var imgdata = CannyJS.canny(canvas);
-			// cannyworker.onmessage = function(e){
-				// console.log(e.data.data);
-				// var messagearray = new Uint8ClampedArray(e.data.data)
-				// var imgdata = new ImageData(messagearray, cw, ch);
-				// ctx.putImageData(imgdata,0,0);
+			
 				ctx.clearRect(0,0,canvas.width,canvas.height);
 				imgdata.drawOn(canvas);
 				const newdata = ctx.getImageData(0, 0, cw, ch);
@@ -182,9 +192,9 @@ function receiveImage(e) {
 				
 				startAnim(cannyarray);
 				
-				// }
+
 			}
-			// console.log(imgdata);
+
 		img.src = event.target.result;
 		console.log(e.target.files[0]);
 		
@@ -192,6 +202,13 @@ function receiveImage(e) {
 	reader.readAsDataURL(e.target.files[0]);     
 }
 // https://gist.github.com/mauriciomassaia
+/**
+ * Resizes imageData according to provided width and height
+ * @param {imageData} imageData 
+ * @param {number} width 
+ * @param {number} height 
+ * @returns Resized imageData
+ */
 function resizeImageData (imageData, width, height) {
 	const resizeWidth = width >> 0
 	const resizeHeight = height >> 0
@@ -212,12 +229,12 @@ function resizeImageData (imageData, width, height) {
 
 // Testing GPU function
 
-const gpu = new GPU();
+// const gpu = new GPU();
 
 
-const gpuComplexAdd = gpu.createKernel(function(a, b){
+// const gpuComplexAdd = gpu.createKernel(function(a, b){
 
-}).setOutput(2);
+// }).setOutput(2);
 
 
 // // dft on gpu --> array of k length, 5 values each
