@@ -124,7 +124,7 @@ function activateUserDrawing(){
 
 
 function startAnim(inputpath) {
-	
+	alert('Loading... Please wait. Processing larger files/drawings can take quite some time');
 	ctx3.clearRect(0,0,300,300);
 
 	// debugger;
