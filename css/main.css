@@ -213,6 +213,7 @@ input[type="file"] {
 	background-color: rgb(0, 110, 255);
 	letter-spacing: 1.5px;
 	font-size: 15px;
+	font-weight: 800;
 	transition: all .3s ease;
 	box-shadow: rgb(0, 82, 191) 0px 10px 0px 0px;
 	color: hsl(0, 0%, 100%);

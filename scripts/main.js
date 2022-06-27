@@ -678,6 +678,7 @@ class EpicycleController{
 		var prevx = this.epicycles[0].x;
 		var prevy = this.epicycles[0].y;
 		var currentepicycle = this.epicycles[0];
+		slider.previousElementSibling.innerHTML = slider.value + '<br>';
 		
 		
 		for (var ep = 0; ep < slider.value-1; ep++){
