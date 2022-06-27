@@ -93,7 +93,7 @@ function hideAllSettings() {
 
 	document.getElementById("draw-btn").classList.remove("btn-pressed");
 	document.getElementById("file-btn").classList.remove("btn-pressed");
-	document.getElementById("api-btn").classList.remove("btn-pressed");
+	// document.getElementById("api-btn").classList.remove("btn-pressed");
 
 	canvas.removeEventListener("mousemove", window.mouseMoveHandler);
 	canvas.removeEventListener("mousedown", window.mouseDownHandler);

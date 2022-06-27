@@ -55,7 +55,7 @@ p{
     /* display: inline-block; */
     border: solid gray 2px;
     border-radius: 15px;
-    width: 15%;
+    width: 18%;
     padding: 30px;
 	height: 740px;
 	position: relative;
@@ -63,7 +63,7 @@ p{
 }
 
 .var-container{
-    float: right;
+    float: left;
     /* left: auto; */
     text-align: center;
     -webkit-user-select: none;
