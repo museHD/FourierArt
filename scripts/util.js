@@ -85,6 +85,19 @@ function displayLoadingMsg(on) {
 	
 }
 
+function setDrawMethod(val) {
+	let btn = document.getElementById("drawmethod");
+	if (val == 1){
+		btn.value == 1;
+		btn.checked = true;
+	}
+	else{
+		btn.value == 0;
+		btn.checked = false;
+	}
+	
+}
+
 function hideAllSettings() {
     const settings = document.getElementsByClassName("settings");
     for (let index = 0; index < settings.length; index++) {

@@ -38,6 +38,7 @@ canvas2.classList.add("canvas-container");
 const target_canv = document.getElementById("target-canvas");
 const ctx3 = target_canv.getContext("2d");
 
+const drawmethod_el = document.getElementById("drawmethod");
 var drawmethod = 0;
 
 var requestID;
@@ -69,10 +70,12 @@ var fourier_path = [];
 var inputpath = [];
 
 function activateUserDrawing(){
+	stopAnim();
 	var x,y,prevx,prevy = 0;
 	fourier_path = [];
 	user_drawing = [];
-	drawmethod = 0; //Draw connecting lines b/w points
+	// drawmethod = 0; //Draw connecting lines b/w points
+	setDrawMethod(0);
 	hideAllSettings();
 
 	ctx.clearRect(0,0,800,800);
@@ -175,7 +178,8 @@ function stopAnim() {
 
 function activateFileDrawing(){
 	stopAnim();
-	drawmethod = 1; //Set draw method to points
+	// drawmethod = 1; //Set draw method to points
+	setDrawMethod(1);
 	hideAllSettings();
 	ctx.clearRect(0,0,800,800);
 	ctx2.clearRect(0,0,800,800);
@@ -242,6 +246,7 @@ function retrieveAPIImage(category){
 }
 
 function rabbitExample() {
+	setDrawMethod(1);
 	console.log("rabbit");
 	let path = [];
 	fetch("./examples/rabbit.json")
@@ -254,6 +259,7 @@ function rabbitExample() {
 
 }
 function controllerExample() {
+	setDrawMethod(1);
 	let path = [];
 	fetch("./examples/controller.json")
 	.then(response => {
@@ -267,6 +273,7 @@ function controllerExample() {
 }
 
 function catExample() {
+	setDrawMethod(1);
 	let path = [];
 	fetch("./examples/cat.json")
 	.then(response => {
@@ -280,6 +287,7 @@ function catExample() {
 }
 
 function pidgeonExample() {
+	setDrawMethod(1);
 	let path = [];
 	fetch("./examples/pidgeon.json")
 	.then(response => {
@@ -293,6 +301,7 @@ function pidgeonExample() {
 }
 
 function banjoExample() {
+	setDrawMethod(1);
 	let path = [];
 	fetch("./examples/banjo.json")
 	.then(response => {
@@ -702,7 +711,7 @@ class EpicycleController{
 		
 		// Draws points vs lines depending on drawing method
 		ctx2.beginPath();
-		if (drawmethod == 0) {
+		if (drawmethod_el.checked == false) {
 			ctx2.moveTo(prevx,prevy);
 			ctx2.lineTo(currentepicycle.x, currentepicycle.y);		
 		}
