@@ -8,9 +8,9 @@
   <p align="center">
     <em>Art through Mathematics</em>
     <br />
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">Report Bug</a>
+    <a href="https://github.com/museHD/FourierArt/issues">Report Bug</a>
     ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">Request Feature</a>
+    <a href="https://github.com/museHD/FourierArt/issues">Request Feature</a>
   </p>
 </div>
 
