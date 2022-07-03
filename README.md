@@ -1,7 +1,8 @@
 <div align="center">
 
+<a href="https://musehd.github.io/FourierArt/"> 
   <img src="imgs/fav.ico" alt="Logo" width="150">
-
+</a>
 
   <h3 align="center">FourierArt</h3>
 
