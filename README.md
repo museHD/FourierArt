@@ -1,18 +1,33 @@
+<div align="center">
 
-<h2 align="center">
-  FourierArt <br> <br>
-  <img src="imgs/fav.ico" alt="Logo" width="120" height="120"> <br> <br>
-  <em>Art through Mathematics</em>
-</h2>
+  <img src="imgs/fav.ico" alt="Logo" width="150">
+
+
+  <h3 align="center">FourierArt</h3>
+
+  <p align="center">
+    <em>Art through Mathematics</em>
+    <br />
+    <a href="https://github.com/othneildrew/Best-README-Template/issues">Report Bug</a>
+    ·
+    <a href="https://github.com/othneildrew/Best-README-Template/issues">Request Feature</a>
+  </p>
+</div>
 
 
 ## About the Project:
 🖼 SDD Major Project - Using Discrete Fourier Transform to artistically trace drawings in JavaScript
 
-It simulates a chaotic physics system where a pendulum is attached to the end of another pendulum.
-The length of these pendulums and the angle they are released at can be customised using the UI. The simulation uses the Runge-Kutta differential equation solver in order to provide relatively accurate results. 
+When i first saw [this](https://youtu.be/r6sGWTCMz2k?t=37) video from 3Blue1Brown back in 2020, I was extremely intrigued with the concept behind the Fourier Transform. It is my biggest inspiration for this project.
 
-Although the project has been assessed, it's still very interesting to play around with and can be improved quite a lot. If you are interested in improving it, see <a href="#contributing">Contributing.</a>
+I had the idea of making this project back then, but I was focusing on other projects so I put this one off. In 2021, I wanted to take on the challenge, but due to my lack of experience, I settled on doing a [Double Pendulum Simulator](https://github.com/museHD/DoublePendulum) that I handed in for my assessment. However, at the end of 2021, I finally decided to do this project as my Software Major Work.
+
+It uses several epicycles (circles that move around the circumference of larger circles), all rotating at different speeds to create complex shapes and patterns with what looks like chaotic frenzy, but in reality is clockwork rigidity.
+
+Although the project has been assessed, it's still very interesting to play around with and can be improved quite a lot. 
+Please feel free to leave any feedback! ❤️
+
+If you are interested in improving it, see <a href="#contributing">Contributing.</a>
 
 
 ## Getting Started
@@ -37,6 +52,8 @@ The Control Panel in the middle allows you to change settings.
   Allows you to draw on the canvas
 * Image  
   Allows you to upload an image file to be drawn
+* Draw Method  
+  Allows you to switch between drawing using lines and dots. Each mode will automatically switch to the preferred method. It is recommended to not change this.
 * Precision  
   Controls the number of epicycles used, and how accurately the target drawing is being drawn
 * Target Drawing  
