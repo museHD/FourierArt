@@ -30,6 +30,11 @@ Please feel free to leave any feedback! ❤️
 
 If you are interested in improving it, see <a href="#contributing">Contributing.</a>
 
+#### Update:
+I got full marks (65/65) for the software component of the assessment :)  
+However, I lost a couple marks in the documentation :(  
+In total: 98%
+
 
 ## Getting Started
 
