@@ -63,6 +63,13 @@ The Control Panel in the middle allows you to change settings.
 The Info Panel on the right provides some information about what the program does.  
 It also has examples that can be tried out.
 
+## Examples
+![vectr (Custom)](https://user-images.githubusercontent.com/57558058/190040025-558e1508-a3d7-454b-bef7-aeb2365fe320.png)
+![pagys (Custom)](https://user-images.githubusercontent.com/57558058/190040030-3ecd3ffb-37df-4de3-b645-c630e552a588.png)
+
+![image](https://user-images.githubusercontent.com/57558058/190039365-d4f6e437-79f4-48a4-9546-fc27eb606958.png)
+
+
 ## Contributing
 Please feel free to raise issues and suggest changes to the project.
 Although it has been submitted, it can be improved through code optimsation and UI changes.
