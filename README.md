@@ -44,7 +44,7 @@ OR
   For full functionality offline, it will be required to locally host a webserver.
   
   If you have Python 3 installed, this can be done by running the command `python -m http.server 8000`
-  Once the server is running, visit `localhost:3000` from a browser.
+  Once the server is running, visit `localhost:8000` from a browser.
 
 
 ### Usage
