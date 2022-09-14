@@ -64,9 +64,8 @@ The Info Panel on the right provides some information about what the program doe
 It also has examples that can be tried out.
 
 ## Examples
-![vectr (Custom)](https://user-images.githubusercontent.com/57558058/190040025-558e1508-a3d7-454b-bef7-aeb2365fe320.png)
-![pagys (Custom)](https://user-images.githubusercontent.com/57558058/190040030-3ecd3ffb-37df-4de3-b645-c630e552a588.png)
-
+![pagys (Custom) (1)](https://user-images.githubusercontent.com/57558058/190040223-8b30a891-09bd-4ede-abdb-0fb5da2ec9d2.png)
+![vectr (Custom) (1)](https://user-images.githubusercontent.com/57558058/190040220-f6894a42-6f19-4a66-9ec2-41ed6f6bf20b.png)
 ![image](https://user-images.githubusercontent.com/57558058/190039365-d4f6e437-79f4-48a4-9546-fc27eb606958.png)
 
 
